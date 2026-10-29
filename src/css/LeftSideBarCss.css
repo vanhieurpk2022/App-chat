@@ -1,0 +1,12 @@
+.chat-icon {
+    color: rgb(99, 113, 104);
+}
+
+.active {
+    background-color: #DBEAFE;
+    color: #2563EB;
+}
+
+.active .chat-icon {
+    color: #2563EB;
+}

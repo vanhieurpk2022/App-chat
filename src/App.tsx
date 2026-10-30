@@ -1,10 +1,15 @@
 import './App.css'
-import LeftSideBar from './components/LeftSideBar';
+import LeftSideBar from './components/utils/MainSideBar';
+import ChatListPanel from './layout/ChatListPanel';
 
 function App() {
   return (
     <div id="app-container">
-      <LeftSideBar />
+      <div className='d-flex flex-row'>
+        <LeftSideBar isChat={true} />
+
+        <ChatListPanel />
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import './App.css'
 import ChatMain from './components/chat/ChatMain';
+import RightProfile from './components/chat/RightProfile';
 import LeftSideBar from './components/utils/MainSideBar';
 import ChatListPanel from './layout/ChatListPanel';
 
@@ -10,6 +11,7 @@ function App() {
         <LeftSideBar isChat={true} />
         <ChatListPanel />
         <ChatMain />
+        <RightProfile />
       </div>
     </div>
   );

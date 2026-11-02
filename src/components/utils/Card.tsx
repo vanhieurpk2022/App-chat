@@ -21,19 +21,23 @@ export default function Card({ imgUrl, name, time, message, isActive = false, st
                 {status && <FontAwesomeIcon className="position-absolute bottom-0 end-0 text-success" stroke="white" strokeWidth={"40"} icon={faCircle} />}
             </div>
 
-            <div className="d-flex flex-column ">
-                <div className="d-flex">
-                    <span className="flex-grow-1 fw-semibold" >{name}</span>
-                    <span className="small">{time}</span>
+            <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
+                <div className="d-flex gap-2">
+                    <span className="flex-grow-1 fw-semibold text-truncate" style={{ minWidth: 0 }}>{name}</span>
+                    <span className="small flex-shrink-0">{time}</span>
                 </div>
 
-                <div className="d-flex gap-2 py-2">
-                    <span className="flex-grow-1 small text-secondary ">{message}</span>
-                    {countMess > 0 ? <span className="small bottom-0 end-0 px-2 bg-primary text-white rounded-circle">3</span> : ""}
+                <div className="d-flex gap-2 py-2 align-items-center">
+                    <span className="flex-grow-1 small text-secondary text-truncate" style={{ minWidth: 0 }}>
+                        {message}
+                    </span>
 
+                    {countMess > 0 && (
+                        <span className="small px-2 bg-primary text-white rounded-circle flex-shrink-0">
+                            {countMess}
+                        </span>
+                    )}
                 </div>
-
-
             </div>
         </div>
     );

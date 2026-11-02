@@ -1,11 +1,11 @@
-import { BoxArrowRight, ExclamationTriangle, Trash } from "react-bootstrap-icons";
+import { ExclamationTriangle, Trash } from "react-bootstrap-icons";
 import RightProfileHeader from "./RightProfileHeader";
 import RightProfileMain from "./RightProfileMain";
 import "../../css/RightProfile.css"
 
 export default function RightProfile() {
     return (
-        <div >
+        <div className="border-start p-3">
             <RightProfileHeader />
             <RightProfileMain />
 

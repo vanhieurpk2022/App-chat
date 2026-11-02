@@ -3,7 +3,7 @@ import { faSliders, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
-interface MainSideBarProps {
+interface LeftSideBarProps {
     isChat?: boolean;
     isUser?: boolean;
     isFolder?: boolean;
@@ -11,10 +11,10 @@ interface MainSideBarProps {
 
 }
 
-export default function MainSideBar({ isChat = false, isUser = false, isFolder = false, isBookMark = false }: MainSideBarProps) {
+export default function LeftSideBar({ isChat = false, isUser = false, isFolder = false, isBookMark = false }: LeftSideBarProps) {
 
-    return <>
-        <div className="d-flex flex-column vh-100" style={{ backgroundColor: "#F0F2ED" }}>
+    return (
+        <div className="d-flex flex-column vh-100 p-3" style={{ backgroundColor: "#F0F2ED" }}>
             <span className="bg-primary mt-3 text-light p-2 d-inline-flex align-items-center justify-content-center rounded-3" style={{ width: '42px', height: '42px' }}>
                 <FontAwesomeIcon icon={faCommentDots} className="fs-4" />
             </span>
@@ -52,5 +52,5 @@ export default function MainSideBar({ isChat = false, isUser = false, isFolder =
                 </div>
             </div>
         </div>
-    </>
+    );
 }

@@ -21,7 +21,7 @@ export default function ChatListPanelHeader({ }: ChatListPanelHeaderProps) {
 
 
                 {/* box Seach */}
-                <div>
+                <div className="mt-4 mb-3">
                     <SearchBox />
                 </div>
 

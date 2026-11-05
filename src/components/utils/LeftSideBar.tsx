@@ -13,37 +13,37 @@ interface LeftSideBarProps {
 
 export default function LeftSideBar({ isChat = false, isUser = false, isFolder = false, isBookMark = false }: LeftSideBarProps) {
 
-    return <>
-        <div className="d-flex flex-column vh-100" style={{ backgroundColor: "#F0F2ED" }}>
+    return (
+        <div className="d-flex flex-column vh-100 p-3" style={{ backgroundColor: "#F0F2ED" }}>
             <span className="bg-primary mt-3 text-light p-2 d-inline-flex align-items-center justify-content-center rounded-3" style={{ width: '42px', height: '42px' }}>
                 <FontAwesomeIcon icon={faCommentDots} className="fs-4" />
             </span>
             <div className="d-flex flex-column gap-3 mt-4">
-                <span className={`${isChat}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                <span className={`${isChat && 'active'}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                     <FontAwesomeIcon icon={faComments} className="fs-4 chat-icon" />
                 </span>
-                <span className={`${isUser}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                <span className={`${isUser && 'active'}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                     <FontAwesomeIcon icon={faUserGroup} className="fs-4 chat-icon" />
                 </span>
 
-                <span className={`${isFolder} p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                <span className={`${isFolder && 'active'} p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                     <FontAwesomeIcon icon={faFolderOpen} className="fs-4 chat-icon" />
                 </span>
-                <span className={`${isBookMark} p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                <span className={`${isBookMark && 'active'} p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                     <FontAwesomeIcon icon={faBookmark} className="fs-4 chat-icon" />
                 </span>
             </div>
 
             <div className="d-flex flex-column gap-3 mt-auto">
-                <span className={`${isChat}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                <span className={`${isChat && 'active'}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                     <FontAwesomeIcon icon={faMoon} className="fs-4 chat-icon" />
                 </span>
                 <div className="d-flex flex-column gap-3 mb-3">
-                    <span className={`${isUser}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                    <span className={`${isUser && 'active'}  p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                         <FontAwesomeIcon icon={faCircleQuestion} className="fs-4 chat-icon" />
                     </span>
 
-                    <span className={`${isFolder} p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
+                    <span className={`${isFolder && 'active'} p-2 d-inline-flex align-items-center justify-content-center rounded-3`} style={{ width: '42px', height: '42px' }}>
                         <FontAwesomeIcon icon={faSliders} className="fs-4 chat-icon" />
                     </span>
                     <span className={` p-2 d-inline-flex align-items-center justify-content-center rounded-circle`} style={{ width: '42px', height: '42px' }}>
@@ -52,5 +52,5 @@ export default function LeftSideBar({ isChat = false, isUser = false, isFolder =
                 </div>
             </div>
         </div>
-    </>
+    );
 }

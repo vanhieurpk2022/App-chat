@@ -1,0 +1,8 @@
+.btn-custom {
+    border: 1px solid transparent !important;
+    transition: border-color 0.2s ease;
+}
+
+.btn-custom:hover {
+    border-color: black !important;
+}

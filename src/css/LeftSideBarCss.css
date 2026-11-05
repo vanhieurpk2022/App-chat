@@ -10,3 +10,7 @@
 .active .chat-icon {
     color: #2563EB;
 }
+
+.card-panel .active {
+    background-color: #DBEAFE;
+}

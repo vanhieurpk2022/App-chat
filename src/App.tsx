@@ -1,10 +1,10 @@
 import './App.css'
-import LeftSideBar from './components/LeftSideBar';
+import Chat from './layout/Chat';
 
 function App() {
   return (
     <div id="app-container">
-      <LeftSideBar />
+      <Chat />
     </div>
   );
 }

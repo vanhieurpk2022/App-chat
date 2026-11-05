@@ -1,4 +1,6 @@
 import { CameraVideo, EmojiSmile, HandThumbsUpFill, LayoutSidebarReverse, PlusLg, Search, Telephone } from "react-bootstrap-icons";
+import EmojiPicker from "emoji-picker-react";
+import { useState } from "react";
 
 interface ChatMainProps {
     onShow: () => void;
@@ -7,9 +9,9 @@ interface ChatMainProps {
 
 
 export default function ChatMain({ onShow, isShow }: ChatMainProps) {
-
+    const [showEmoji, setEmoij] = useState(false);
     return (
-        <div className="h-100 w-100 p-2 d-flex flex-column ">
+        <div className="h-100 w-100 d-flex flex-column ">
             {/* Header */}
             <div className="d-flex flex-row align-items-center gap-3 border-bottom w-100 p-3">
 
@@ -48,7 +50,7 @@ export default function ChatMain({ onShow, isShow }: ChatMainProps) {
 
             </div>
             {/* Main Chat */}
-            <div className="d-flex flex-column">
+            <div className="d-flex flex-column h-100" style={{ backgroundColor: "#F8F9F6" }}>
                 {/* Message Opponent */}
                 <div className="d-flex flex-row gap-4 mt-3 ms-3">
                     <div className="rounded-circle overflow-hidden mt-auto" style={{ height: '32px', width: '32px' }}>
@@ -66,31 +68,33 @@ export default function ChatMain({ onShow, isShow }: ChatMainProps) {
                     </div>
                 </div>
             </div>
-            <div className="d-flex flex-column mt-auto mb-2 ">
+            <div className="d-flex flex-column position-relative mt-auto mb-2 ">
                 {/* Công cụ */}
                 <div className="position-relative w-100">
                     {/* Icon trái */}
-                    <PlusLg
-                        className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }}
-                        size={24}
-                    />
-
-
-                    <input
-                        className="form-control form-control-lg"
-                        style={{ paddingLeft: "56px", paddingRight: "96px" }}
-                        placeholder="Aa"
-                    />
+                    <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} />
+                    <input className="form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px" }} placeholder="Aa" />
 
                     {/* Icon phải */}
                     <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">
-                        <EmojiSmile size={24} />
-                        <HandThumbsUpFill
-                            className="text-warning"
-                            size={24}
-                        />
+                        <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                            style={{ cursor: "pointer" }}>
+                            <EmojiSmile size={24} onClick={() => setEmoij(prev => !prev)} />
+                        </button>
+
+                        <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                            style={{ cursor: "pointer" }}>
+                            <HandThumbsUpFill className="text-warning" size={24} />
+                        </button>
                     </div>
+
                 </div>
+                {showEmoji && (
+                    <div className="position-absolute end-0 mb-5 bottom-0 me-2">
+                        <EmojiPicker />
+                    </div>
+                )}
+
             </div>
 
         </div >

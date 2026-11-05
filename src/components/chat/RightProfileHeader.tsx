@@ -3,7 +3,6 @@ import { Bell, Person, PersonAdd } from "react-bootstrap-icons";
 export default function RightProfileHeader() {
     return (
         <div >
-            <span className="fw-semibold fs-4 border-bottom d-block text-center">Thông tin liên hệ</span>
             <div className="d-flex flex-column align-items-center justify-content-center mt-3">
                 <div className="rounded-circle overflow-hidden mb-4 mt-3" style={{ width: "90px", height: "90px" }}>
                     <img src="https://placehold.co/400" width={"100%"} height={"100%"} alt="" />

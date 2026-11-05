@@ -16,6 +16,7 @@
     "@fortawesome/react-fontawesome": "^3.5.0",
     "@reduxjs/toolkit": "^2.13.0",
     "bootstrap": "^5.3.8",
+    "emoji-picker-react": "^5.1.4",
     "react": "^19.3.1",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.3.1",

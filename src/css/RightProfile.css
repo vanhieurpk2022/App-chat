@@ -1,10 +1,5 @@
-.btn-custom {
-    border: 1px solid transparent !important;
-    transition: border-color 0.2s ease;
-}
-
 .btn-custom:hover {
-    border-color: black !important;
+    background-color: #F3F4F6 !important;
 }
 
 .btn-profile:hover {
@@ -13,4 +8,14 @@
 
 .icon-button:hover {
     background-color: rgb(172, 168, 168) !important;
+}
+
+.text-button:hover {
+    background-color: #DBEAFE !important;
+
+}
+
+.card-button:hover {
+    background-color: #DBEAFE !important;
+
 }

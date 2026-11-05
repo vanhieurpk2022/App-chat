@@ -3,7 +3,10 @@ import RightProfileHeader from "./RightProfileHeader";
 import RightProfileMain from "./RightProfileMain";
 import "../../css/RightProfile.css"
 
-export default function RightProfile() {
+interface RightProfile {
+}
+
+export default function RightProfile({ }: RightProfile) {
     return (
         <div className="border-start p-3">
             <RightProfileHeader />

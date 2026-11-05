@@ -1,9 +1,15 @@
 import { CameraVideo, EmojiSmile, HandThumbsUpFill, LayoutSidebarReverse, PlusLg, Search, Telephone } from "react-bootstrap-icons";
 
-export default function ChatMain() {
+interface ChatMainProps {
+    onShow: () => void;
+    isShow: boolean;
+}
+
+
+export default function ChatMain({ onShow, isShow }: ChatMainProps) {
 
     return (
-        <div className="w-100 ms-2  d-flex flex-column ">
+        <div className="h-100 w-100 p-2 d-flex flex-column ">
             {/* Header */}
             <div className="d-flex flex-row align-items-center gap-3 border-bottom w-100 p-3">
 
@@ -22,21 +28,18 @@ export default function ChatMain() {
                     <Telephone size={20} />
                     <CameraVideo size={20} />
                     <Search size={20} />
-                    <div className="d-inline-flex align-items-center justify-content-center p-2 rounded-3" style={{ backgroundColor: "#DBEAFE" }}>
-                        <LayoutSidebarReverse size={20} color="#2563EB" />
+                    <div onClick={onShow} className="d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        style={{ backgroundColor: isShow ? "#DBEAFE" : "transparent", cursor: "pointer" }}>
+                        <LayoutSidebarReverse size={20} color={isShow ? "#2563EB" : ""} />
                     </div>
                 </div>
 
 
             </div>
             {/* Main Chat */}
-            <div className="d-flex flex-column ">
-
-
+            <div className="d-flex flex-column">
                 {/* Message Opponent */}
                 <div className="d-flex flex-row gap-4 mt-3 ms-3">
-
-
                     <div className="rounded-circle overflow-hidden mt-auto" style={{ height: '32px', width: '32px' }}>
                         <img src="https://placehold.co/600x400" width={"100%"} height={"100%"} style={{ objectFit: "cover" }} />
                     </div>
@@ -52,10 +55,8 @@ export default function ChatMain() {
                     </div>
                 </div>
             </div>
-            <div className="d-flex flex-column  gap-3 mt-auto mb-5">
+            <div className="d-flex flex-column mt-auto mb-2 ">
                 {/* Công cụ */}
-
-
                 <div className="position-relative w-100">
                     {/* Icon trái */}
                     <PlusLg

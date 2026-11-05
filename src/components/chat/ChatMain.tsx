@@ -25,13 +25,24 @@ export default function ChatMain({ onShow, isShow }: ChatMainProps) {
                     </div>
                 </div>
                 <div className="d-flex align-items-center gap-3 ms-auto me-3">
-                    <Telephone size={20} />
-                    <CameraVideo size={20} />
-                    <Search size={20} />
-                    <div onClick={onShow} className="d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                    <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        style={{ cursor: "pointer" }}>
+                        <Telephone size={24} />
+                    </button>
+                    <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        style={{ cursor: "pointer" }}>
+                        <CameraVideo size={24} />
+                    </button>
+                    <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        style={{ cursor: "pointer" }}>
+                        <Search size={20} />
+                    </button>
+
+
+                    <button onClick={onShow} className="btn-profile border-0 btn d-inline-flex align-items-center justify-content-center p-2 rounded-3"
                         style={{ backgroundColor: isShow ? "#DBEAFE" : "transparent", cursor: "pointer" }}>
                         <LayoutSidebarReverse size={20} color={isShow ? "#2563EB" : ""} />
-                    </div>
+                    </button>
                 </div>
 
 
@@ -60,9 +71,10 @@ export default function ChatMain({ onShow, isShow }: ChatMainProps) {
                 <div className="position-relative w-100">
                     {/* Icon trái */}
                     <PlusLg
-                        className="position-absolute start-0 top-50 translate-middle-y ms-3"
+                        className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }}
                         size={24}
                     />
+
 
                     <input
                         className="form-control form-control-lg"
@@ -81,6 +93,6 @@ export default function ChatMain({ onShow, isShow }: ChatMainProps) {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 }

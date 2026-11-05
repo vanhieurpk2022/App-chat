@@ -6,3 +6,11 @@
 .btn-custom:hover {
     border-color: black !important;
 }
+
+.btn-profile:hover {
+    background-color: #F3F4F6 !important;
+}
+
+.icon-button:hover {
+    background-color: rgb(172, 168, 168) !important;
+}

@@ -69,6 +69,76 @@ export default function SettingsProfile() {
                     </div>
                 </div>
             </section>
+
+            <main className="settings-main">
+                <header className="main-header">
+                    <h5 className="fw-bold m-0">Thông tin cá nhân</h5>
+                    <button className="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                        <i className="bi bi-pencil me-1"></i> Chỉnh sửa hồ sơ
+                    </button>
+                </header>
+
+                <div className="content-scrollable">
+                    <div className="row g-4">
+                        <div className="col-lg-8">
+                            <div className="card-custom profile-header-card mb-4">
+                                <div className="avatar-large">HA</div>
+                                <div className="profile-title">
+                                    <h3 className="fw-bold m-0">Hoàng An</h3>
+                                    <div className="d-flex align-items-center mt-1">
+                                        <span className="status-indicator-dot"></span>
+                                        <span className="text-muted small ms-1">Đang hoạt động</span>
+                                    </div>
+                                    <div className="mt-2">
+                                        <button className="btn btn-link btn-sm p-0 text-decoration-none text-primary">
+                                            <i className="bi bi-camera me-1"></i> Thay ảnh
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="card-custom mb-4">
+                                <h6 className="fw-bold mb-1">Thông tin cơ bản</h6>
+                                <p className="text-muted extra-small mb-4">Giúp đồng đội hiểu và kết nối với bạn dễ dàng hơn.</p>
+
+                                <div className="row g-3">
+                                    <div className="col-md-6">
+                                        <div className="info-label">Địa chỉ email</div>
+                                        <div className="info-value">
+                                            an.hoang@mam.studio <i className="bi bi-check-circle-fill text-success ms-1" style={{ fontSize: '0.8rem' }}></i>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="info-label">Số điện thoại</div>
+                                        <div className="info-value">+84 912 345 678</div>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="info-label">Chức danh</div>
+                                        <div className="info-value fw-medium">Nhà thiết kế giao diện</div>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="info-label">Bộ phận</div>
+                                        <div className="info-value fw-medium">Đội ngũ thiết kế</div>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="info-label">Địa điểm</div>
+                                        <div className="info-value">Hồ Chí Minh, Việt Nam</div>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="info-label">Múi giờ</div>
+                                        <div className="info-value">(GMT+07:00) Bangkok, Hà Nội</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     )
 }

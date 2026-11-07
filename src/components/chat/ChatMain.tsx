@@ -52,28 +52,35 @@ export default function ChatMain({ onShow, isShow }: ChatMainProps) {
             {/* Main Chat */}
             <div className="d-flex flex-column h-100" style={{ backgroundColor: "#F8F9F6" }}>
                 {/* Message Opponent */}
-                <div className="d-flex flex-row gap-4 mt-3 ms-3">
+                <div className="d-flex flex-row gap-4 mt-3 ms-3 ">
                     <div className="rounded-circle overflow-hidden mt-auto" style={{ height: '32px', width: '32px' }}>
                         <img src="https://placehold.co/600x400" width={"100%"} height={"100%"} style={{ objectFit: "cover" }} />
                     </div>
-                    <div className="bg-white shadow p-3 rounded-3" style={{ maxWidth: "calc(60% - 48px)" }}>
-                        <span className="" >Chào An! Mình vừa hoàn thiện hướng hình ảnh cho website Mộc. Bạn xem qua cùng mình nhé 🌿</span>
+                    <div className="bg-white shadow p-3 rounded-3 position-relative" style={{ maxWidth: "calc(60% - 48px)" }}>
+                        <span className="text-break">Chào An! Mình vừa hoàn thiện hướng hình ảnh cho website Mộc. Bạn xem qua cùng mình nhé 🌿</span>
+                        <br />
+                        <span className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>  11:00 </span>
                     </div>
+
                 </div>
 
                 {/* Message you */}
                 <div className="d-flex flex-row gap-3 mt-3 justify-content-end me-3">
-                    <div className="bg-primary-subtle shadow p-3 rounded-3" style={{ maxWidth: "calc(60% - 48px)" }}>
+                    <div className="bg-primary-subtle shadow p-3 rounded-3 " style={{ maxWidth: "calc(60% - 48px)" }}>
                         <span className="" >Chào An! Mình vừa hoàn thiện hướng hình ảnh cho website Mộc. Bạn xem qua cùng mình nhé 🌿</span>
+                        <br />
+                        <span className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>  11:00 </span>
+
                     </div>
+
                 </div>
             </div>
-            <div className="d-flex flex-column position-relative mt-auto mb-2 ">
+            <div className="d-flex flex-column position-relative mt-auto mb-3  ">
                 {/* Công cụ */}
-                <div className="position-relative w-100">
+                <div className="position-relative d-flex ms-3" style={{ width: "98%" }}>
                     {/* Icon trái */}
                     <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} />
-                    <input className="form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px" }} placeholder="Aa" />
+                    <input className=" form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px" }} placeholder="Aa" />
 
                     {/* Icon phải */}
                     <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">

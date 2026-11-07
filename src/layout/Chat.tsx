@@ -14,7 +14,7 @@ export default function Chat() {
                 <LeftSideBar isChat={true} />
             </div>
 
-            <div style={{ width: "400px" }} className="flex-shrink-0 border-end">
+            <div style={{ width: "350px", border: "1px solid #E8ECE5" }} className="flex-shrink-0 border-end p-3">
                 <ChatListPanel />
             </div>
 
@@ -24,7 +24,7 @@ export default function Chat() {
 
             {
                 (rightProfile) &&
-                <div style={{ width: "500px" }} className="flex-shrink-0 border-start overflow-auto">
+                <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 border-start overflow-auto " >
                     <RightProfile />
                 </div>
             }

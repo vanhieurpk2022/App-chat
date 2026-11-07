@@ -13,7 +13,7 @@ interface CardProps {
 
 export default function Card({ imgUrl, name, time, message, isActive = false, status = false, countMess = 0 }: CardProps) {
     return (
-        <div className={`${isActive && 'active'}  card-panel d-flex flex-row gap-3 p-3 rounded-3`}>
+        <div className={`${isActive && 'active'}  card-panel d-flex flex-row gap-3 p-3 rounded-3 card-button`} style={{ cursor: "pointer" }}>
             <div className="position-relative d-inline-block">
                 <div className="rounded-circle overflow-hidden" style={{ width: 66, height: 66 }}>
                     <img src={imgUrl} width="100%" height="100%" style={{ objectFit: 'cover' }} />

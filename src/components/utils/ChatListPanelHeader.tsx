@@ -26,9 +26,9 @@ export default function ChatListPanelHeader({ }: ChatListPanelHeaderProps) {
                 </div>
 
                 <div className="d-flex flex-row gap-4 ">
-                    <Link to="#" className="active text-reset text-decoration-none rounded-3 p-2 small" >Tất cả</Link>
-                    <Link to="#" className="text-reset text-decoration-none p-2 rounded-3 p-2 small" >Chưa đọc</Link>
-                    <Link to="#" className="text-reset text-decoration-none p-2 rounded-3 p-2 small" >Nhóm</Link>
+                    <Link to="#" className="text-button active text-reset text-decoration-none rounded-3 p-2 small" >Tất cả</Link>
+                    <Link to="#" className="text-button text-reset text-decoration-none p-2 rounded-3 p-2 small" >Chưa đọc</Link>
+                    <Link to="#" className="text-button text-reset text-decoration-none p-2 rounded-3 p-2 small" >Nhóm</Link>
                 </div>
             </div>
         </div>

@@ -1,16 +1,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Account } from "../model/User";
 
-interface InitState {
-    user: Account | null;
+interface RegisterState {
     error: string | null;
     status: "idle" | "loading" | "success" | "error";
+    userExists: boolean | null;
 }
 
-const initialState: InitState = {
-    user: null,
+const initialState: RegisterState = {
     error: null,
-    status: "idle"
+    status: "idle",
+    userExists: null,
 }
 
 const registerSlice = createSlice({
@@ -19,16 +19,24 @@ const registerSlice = createSlice({
     reducers: {
         registerStarted: (state) => {
             state.status = "loading";
+            state.error = null;
         },
         registerFailed: (state, action: PayloadAction<string>) => {
+            state.status = "error";
             state.error = action.payload;
-            state.status = "idle";
         },
         registerSuccess: (state) => {
             state.status = "success";
-        }
+        },
+        checkAccountExits: (state, action: PayloadAction<boolean>) => {
+            state.userExists = action.payload;
+        },
+        checkAccountExitsReset: (state) => {
+            state.userExists = null;
+        },
+        registerReset: () => initialState,
     }
 })
 
-export const { registerStarted, registerFailed, registerSuccess } = registerSlice.actions;
+export const { registerStarted, registerFailed, registerSuccess, checkAccountExits, checkAccountExitsReset, registerReset } = registerSlice.actions;
 export default registerSlice.reducer;

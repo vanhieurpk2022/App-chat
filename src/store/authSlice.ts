@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { AUTH_KEY, loadSaved } from "../model/LoginSubcribe";
 
-export const AUTH_KEY = "auth";
+
 
 interface AuthState {
     user: string | null;
@@ -10,18 +11,9 @@ interface AuthState {
     error: string | null;
 }
 
-function loadSaved() {
-    try {
-        const raw = localStorage.getItem(AUTH_KEY);
-        if (raw) return JSON.parse(raw) as { user: string; reLoginCode: string };
-    } catch (error) {
-
-    }
-    return { user: null, reLoginCode: null };
-}
 
 const initialState: AuthState = {
-    ...loadSaved(),
+    ...loadSaved(AUTH_KEY),
     pendingUser: null,
     status: "idle",
     error: null
@@ -50,6 +42,9 @@ const authSlice = createSlice({
         logout: (state) => {
             state.user = null;
             state.reLoginCode = null;
+            state.pendingUser = null;
+            state.status = "idle";
+            state.error = null;
         }
 
     }

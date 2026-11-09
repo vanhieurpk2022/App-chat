@@ -1,6 +1,6 @@
 import { wssEvent } from "../model/webSocketUrl";
 import { loginFailed, loginSucess, logout } from "../store/authSlice";
-import { messageReceived } from "../store/chatSlice";
+import { registerFailed, registerSuccess } from "../store/registerSlice";
 import type { AppDispatch } from "../store/store";
 import { chatSocket } from "./ChatWebSocket";
 
@@ -10,15 +10,17 @@ export function AuthSocketHandler(dispatch: AppDispatch) {
             if (msg.status === "success") {
                 dispatch(loginSucess(msg.data.RE_LOGIN_CODE));
             } else {
-                dispatch(loginFailed(String(msg.data)));
+                dispatch(loginFailed(String(msg.mes)));
             }
         }),
         chatSocket.on(wssEvent.LOGOUT, () => {
             dispatch(logout());
         }),
-        chatSocket.on(wssEvent.CHAT_PEOPLE_GET_MES, (msg) => {
+        chatSocket.on(wssEvent.REGISTER, (msg) => {
             if (msg.status === "success") {
-                dispatch(messageReceived(msg.data))
+                dispatch(registerSuccess());
+            } else {
+                dispatch(registerFailed(String(msg.mes)));
             }
         })
     ]

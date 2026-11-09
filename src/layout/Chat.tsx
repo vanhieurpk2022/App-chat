@@ -11,7 +11,7 @@ export default function Chat() {
     return (
         <div className="d-flex vh-100">
             <div style={{ width: "80px" }} className="flex-shrink-0">
-                <LeftSideBar isChat={true} />
+                <LeftSideBar isChat={true}/>
             </div>
 
             <div style={{ width: "350px", border: "1px solid #E8ECE5" }} className="flex-shrink-0 border-end p-3">

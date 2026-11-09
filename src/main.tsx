@@ -10,6 +10,7 @@ import { persistAuth } from './model/LoginSubcribe.ts'
 import { AuthSocketHandler } from './wss/AuthSocketHandler.ts'
 import { chatSocket } from './wss/ChatWebSocket.ts'
 
+
 // persistAuth();
 // AuthSocketHandler(store.dispatch);
 // chatSocket.connect().catch(console.error);
@@ -21,5 +22,6 @@ createRoot(document.getElementById('root')!).render(
         <App />
       </BrowserRouter>
     </Provider>
+
   </StrictMode>,
 )

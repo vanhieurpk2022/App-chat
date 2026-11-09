@@ -21,8 +21,14 @@ class ChatSocket {
         });
     }
 
-    send(payload: unknown) {
-        this.ws?.send(JSON.stringify(payload));
+    send(event: string, data: unknown): boolean {
+        const ws = this.ws;
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.warn("Chưa kết nối....", event);
+            return false;
+        }
+        ws.send(JSON.stringify({ action: "onchat", data: { event, data } }))
+        return true;
     }
 
     // Lắng nghe một event, trả về hàm để hủy lắng nghe

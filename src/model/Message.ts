@@ -14,7 +14,7 @@ export interface MessageRoom {
     type: number;
 }
 
-export interface SendChat {
+export interface SendChatSingle {
     name: string;
     to: string;
     mes: string;

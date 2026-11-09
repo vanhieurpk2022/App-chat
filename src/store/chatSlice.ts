@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { MessageSingle } from "../model/Message";
+import type { MessageSingle, SendChatSingle } from "../model/Message";
 
 interface ChatState {
     messages: MessageSingle[];
@@ -11,13 +11,12 @@ interface ChatState {
 const initialState: ChatState = { messages: [], status: 'idle', error: null };
 
 const chatSlice = createSlice({
-    name: "chatSingle",
+    name: "chat/people/getMess",
     initialState: initialState,
     reducers: {
         messageReceived: (state, action: PayloadAction<MessageSingle>) => {
             state.messages.push(action.payload);
         }
-
     }
 });
 

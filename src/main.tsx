@@ -11,7 +11,7 @@ import { AuthSocketHandler } from './wss/AuthSocketHandler.ts'
 import { chatSocket } from './wss/ChatWebSocket.ts'
 
 
-// persistAuth();
+// persistAuth(store);
 // AuthSocketHandler(store.dispatch);
 // chatSocket.connect().catch(console.error);
 

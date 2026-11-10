@@ -1,7 +1,7 @@
-import type { ApiResponse } from "./request";
+import type { SocketResponse } from "./request";
 
 // src/lib/chatSocket.ts
-type Handler = (msg: ApiResponse<any>) => void;
+type Handler = (msg: SocketResponse<any>) => void;
 
 class ChatSocket {
     private ws: WebSocket | null = null;
@@ -15,7 +15,7 @@ class ChatSocket {
             this.ws.onerror = () => reject(new Error("Không kết nối được server"));
 
             this.ws.onmessage = (e) => {
-                const msg: ApiResponse<any> = JSON.parse(e.data);
+                const msg: SocketResponse<any> = JSON.parse(e.data);
                 this.handlers.get(msg.event)?.forEach((h) => h(msg));
             };
         });

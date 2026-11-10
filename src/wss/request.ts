@@ -1,4 +1,4 @@
-export interface ApiResponse<T> {
+export interface SocketResponse<T> {
     status: string;
     event: string;
     data?: T;

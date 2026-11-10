@@ -1,4 +1,6 @@
-export interface MessageSingle {
+import type { InviteUser } from "./User";
+
+export interface ChatMess {
     id?: number;
     name: string;
     to: string;
@@ -7,16 +9,17 @@ export interface MessageSingle {
     type: number;
 }
 
-export interface MessageRoom {
+export interface Message {
     name: string;
     to: string;
     mes: string;
     type: number;
 }
 
-export interface SendChatSingle {
+
+
+export interface ChatPeopleFormat {
     name: string;
-    to: string;
-    mes: string;
-    type: number;
+    user: InviteUser;
+    chatMess: ChatMess;
 }

@@ -1,4 +1,5 @@
-import { store } from "../store/store";
+import type { Store } from "@reduxjs/toolkit";
+import { type RootState } from "../store/store";
 
 export const AUTH_KEY = "auth";
 
@@ -12,7 +13,7 @@ export function loadSaved(authKey: string) {
     return { user: null, reLoginCode: null };
 }
 
-export function persistAuth() {
+export function persistAuth(store: Store<RootState>) {
     let last = {
         user: store.getState().auth.user,
         code: store.getState().auth.reLoginCode,

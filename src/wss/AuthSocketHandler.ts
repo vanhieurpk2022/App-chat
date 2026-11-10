@@ -12,11 +12,20 @@ export function AuthSocketHandler(dispatch: AppDispatch) {
                 dispatch(loginFailed(String(msg.mes)));
             }
         }),
+
         chatSocket.on(wssEvent.LOGOUT, () => {
             dispatch(logout());
         }),
+
         chatSocket.on(wssEvent.REGISTER, (msg) => {
-        })
+            // register
+        }),
+
+        chatSocket.on(wssEvent.RE_LOGIN, () => {
+            // RE LOGIN
+        }),
+
+
     ]
     return () => offs.forEach((off) => off());
 }

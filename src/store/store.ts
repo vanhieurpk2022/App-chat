@@ -5,7 +5,7 @@ import chatSlice from "./chatSlice";
 export const store = configureStore({
     reducer: {
         auth: authSlice,
-        chat: chatSlice
+        chat: chatSlice,
     }
 })
 

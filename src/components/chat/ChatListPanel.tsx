@@ -1,19 +1,43 @@
+import { useEffect } from "react";
 import Card from "../utils/Card";
 import ChatListPanelHeader from "../utils/ChatListPanelHeader";
+import { userSend } from "../../services/userService";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import { chatService } from "../../services/chatService";
+import { selectChat, isRoomChat } from "../../store/chatSlice";
+
+
 
 export default function ChatListPanel() {
+    const dispatch = useDispatch<AppDispatch>();
+    const users = useSelector((state: RootState) => state.chat.UserListHoder);
+
+    useEffect(() => {
+        userSend.getUserList();
+    }, [])
+
+    const handleSelectUser = (userName: string) => {
+        dispatch(selectChat(userName))
+        // check type
+        if (users.find((us) => us.userList.name === userName)?.userList.type === 1) {
+            dispatch(isRoomChat(true));
+            chatService.chatRoomGetMes(userName, 1);
+        } else {
+            dispatch(isRoomChat(false));
+            chatService.chatPeopleGetMes(userName, 1);
+        }
+
+    };
+
     return (
         <div className="d-flex flex-column h-100 " style={{ minHeight: 0 }}>
             <ChatListPanelHeader />
             <div className="mt-3 d-flex flex-column flex-grow-1 overflow-y-auto overflow-x-hidden gap-2" style={{ minHeight: 0 }}>
-                <Card imgUrl="https://placehold.co/400" countMess={3}
-                    name="Nguyễn Mai" time="10:32" message="Mai: Nhớ gửi bản thảo nhé! nhớ gửi bản thảo nhé Mai: Nhớ gửi bản thảo nhé! nhớ gửi bản thảo nhéMai: Nhớ gửi bản thảo nhé! nhớ gửi bản thảo nhéMai: Nhớ gửi bản thảo nhé! nhớ gửi bản thảo nhé" isActive={true} />
-                <Card imgUrl="https://png.pngtree.com/png-clipart/20220909/original/pngtree-women-cartoon-avatar-in-flat-style-png-image_8515458.png"
-                    name="Nguyễn Mai" time="10:32" message="Mai: Nhớ gửi bản thảo nhé!" />
-                <Card imgUrl="https://png.pngtree.com/png-clipart/20220909/original/pngtree-women-cartoon-avatar-in-flat-style-png-image_8515458.png"
-                    name="Nguyễn Mai" time="10:32" message="Mai: Nhớ gửi bản thảo nhé!" />
-                <Card imgUrl="https://png.pngtree.com/png-clipart/20220909/original/pngtree-women-cartoon-avatar-in-flat-style-png-image_8515458.png"
-                    name="Nguyễn Mai" time="10:32" message="Mai: Nhớ gửi bản thảo nhé!" />
+                {users.map((user) => (
+                    <Card onClick={() => handleSelectUser(user.userList.name)} key={user.userList.name} imgUrl={"https://cdn-icons-png.flaticon.com/512/6596/6596121.png"} isCommunity={user.userList.type == 1}
+                        name={user.userList.name} time={user.userList.actionTime.slice(11, 16)} message="" isActive={false} />
+                ))}
 
             </div>
 

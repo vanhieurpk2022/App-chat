@@ -13,8 +13,9 @@ export function AuthSocketHandler(dispatch: AppDispatch) {
             }
         }),
 
-        chatSocket.on(wssEvent.LOGOUT, () => {
-            dispatch(logout());
+        chatSocket.on(wssEvent.LOGOUT, (msg) => {
+            if (msg.status = "success") dispatch(logout());
+
         }),
 
         chatSocket.on(wssEvent.REGISTER, (msg) => {

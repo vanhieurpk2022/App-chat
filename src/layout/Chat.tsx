@@ -41,7 +41,7 @@ export default function Chat() {
             {
                 (rightProfile) &&
                 <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 border-start overflow-auto " >
-                    <RightProfile />
+                    <RightProfile chatRoom={isRoom ? chatRoom : null} title={view.title ?? ""} countNumber={isRoom ? view.countNumber : 0} isRoom={isRoom} />
                 </div>
             }
 

@@ -1,4 +1,4 @@
-import { CameraVideo, CircleFill, EmojiSmile, HandThumbsUpFill, LayoutSidebarReverse, Person, PlusLg, Search, Telephone } from "react-bootstrap-icons";
+import { CameraVideo, ChatDots, CircleFill, EmojiSmile, HandThumbsUpFill, LayoutSidebarReverse, Person, PlusLg, Search, Telephone } from "react-bootstrap-icons";
 import EmojiPicker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import type { ChatMess } from "../../model/Message";
@@ -18,7 +18,7 @@ interface ChatMainProps {
 export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber }: ChatMainProps) {
     const [showEmoji, setEmoij] = useState(false);
     const bottomRef = useRef<HTMLDivElement>(null);
-
+    const isLoading = useSelector((state: RootState) => state.chat.isLoading);
     const user = useSelector((state: RootState) => state.auth.user);
 
     const list = [...(messages)].reverse();
@@ -81,8 +81,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
             </div>
             {/* Main Chat */}
             <div className="d-flex flex-column h-100 overflow-auto pb-5" style={{ backgroundColor: "#EBECF0" }}>
-                {
-                    list.map((mess, i) => {
+                {isLoading ?
+                    <div className="d-flex justify-content-center align-items-center flex-grow-1">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Đang tải...</span>
+                        </div>
+                    </div>
+                    : list.length > 0 ? list.map((mess, i) => {
 
                         const prev = list[i - 1];
                         const next = list[i + 1];
@@ -130,7 +135,18 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         );
 
 
-                    })
+                    }) :
+                        <div className="d-flex flex-column justify-content-center align-items-center flex-grow-1 text-secondary text-center px-4">
+                            <div
+                                className="rounded-circle bg-white shadow-sm d-flex justify-content-center align-items-center mb-3"
+                                style={{ width: 64, height: 64 }}
+                            >
+                                <ChatDots size={28} className="text-primary" />
+                            </div>
+                            <span className="fw-medium">Chưa có tin nhắn nào</span>
+                            <small>Hãy gửi lời chào để bắt đầu cuộc trò chuyện</small>
+                        </div>
+
                 }
                 <div ref={bottomRef}></div>
 

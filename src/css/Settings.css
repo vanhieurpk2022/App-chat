@@ -155,3 +155,27 @@
     font-size: 0.875rem;
     color: var(--text-main);
 }
+
+.security-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    cursor: pointer;
+}
+
+.workspace-card-bg {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.workspace-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background-color: #dcfce7;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

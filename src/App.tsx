@@ -9,14 +9,21 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from './store/store';
 import { ChatSocketHandle } from './wss/ChatSocketHandle';
+import { AuthSocketHandler } from './wss/AuthSocketHandler';
+import { authService } from './services/authService';
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         const cleanSocket = ChatSocketHandle(dispatch);
+        const authSocket = AuthSocketHandler(dispatch);
+
+        dispatch(authService.login({ user: "test", pass: "123456" }));
+
         return () => {
             cleanSocket();
+            authSocket();
         }
     }, [dispatch])
     return (

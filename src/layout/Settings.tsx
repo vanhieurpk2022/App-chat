@@ -1,5 +1,5 @@
 import LeftSideBar from "../components/utils/LeftSideBar";
-import SettingsProfile from "../components/settings/SettingsProfile";
+import SettingsProfile from "../components/settings/SettingsLayout";
 
 export default function Settings() {
     return (

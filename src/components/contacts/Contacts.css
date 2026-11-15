@@ -751,3 +751,93 @@
         width: 200px;
     }
 }
+/* Add Contact Modal */
+.contacts-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.contacts-modal {
+    width: 100%;
+    max-width: 460px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.contacts-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.contacts-modal-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.contacts-modal-header button {
+    border: none;
+    background: transparent;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.contacts-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.contacts-modal label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 7px;
+}
+
+.contacts-modal input,
+.contacts-modal select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+}
+
+.contacts-modal input:focus,
+.contacts-modal select:focus {
+    border-color: #648b71;
+}
+
+.contacts-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.contacts-modal-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.contacts-modal-actions button:first-child {
+    background: #eee;
+}
+
+.contacts-modal-actions button:last-child {
+    background: #648b71;
+    color: white;
+}

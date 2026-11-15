@@ -1,5 +1,4 @@
-
-import { useMemo, useState , type FormEvent} from 'react';
+import {useMemo, useState, type FormEvent} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUsers,
@@ -36,6 +35,8 @@ export default function Contacts() {
     const [category, setCategory] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditingNote, setIsEditingNote] = useState(false);
+    const [noteDraft, setNoteDraft] = useState('');
 
     const selectedContact = contacts.find(item => item.id === selectedId) ?? contacts[0];
 
@@ -84,6 +85,26 @@ export default function Contacts() {
             )
         );
     };
+
+    const handleSaveNote = () => {
+        if (!selectedContact) return;
+
+        setContacts(prev =>
+            prev.map(contact =>
+                contact.id === selectedContact.id
+                    ? { ...contact, note: noteDraft.trim() }
+                    : contact
+            )
+        );
+
+        setIsEditingNote(false);
+    };
+
+    const handleCancelNote = () => {
+        setNoteDraft(selectedContact?.note ?? '');
+        setIsEditingNote(false);
+    };
+
     const handleAddContact = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -504,11 +525,20 @@ export default function Contacts() {
                         <section className="contacts-note">
                             <div className="contacts-section-title">
                                 <h4>Ghi chú riêng</h4>
-                                <button title="Chỉnh sửa ghi chú">
-                                    <FontAwesomeIcon icon={faPen} />
-                                </button>
+                                {!isEditingNote && (
+                                    <button title="Chỉnh sửa ghi chú" onClick={() => {setNoteDraft(selectedContact.note ?? '');setIsEditingNote(true);}}>
+                                        <FontAwesomeIcon icon={faPen} />
+                                    </button>
+                                )}
                             </div>
-                            <p>{selectedContact.note}</p>
+                            {isEditingNote ? (
+                                <div className="contacts-note-editor"><textarea value={noteDraft} onChange={event => setNoteDraft(event.target.value)} placeholder="Nhập ghi chú riêng..." rows={4}/>
+                                    <div className="contacts-note-actions">
+                                        <button type="button" onClick={handleCancelNote}>Hủy</button>
+                                        <button type="button" onClick={handleSaveNote}>Lưu ghi chú</button>
+                                    </div>
+                                </div>
+                            ):(<p> {selectedContact.note || 'Chưa có ghi chú riêng.'}</p>)}
                             <small>♙ Chỉ bạn nhìn thấy ghi chú này</small>
                         </section>
                     </>

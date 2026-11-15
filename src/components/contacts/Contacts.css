@@ -751,7 +751,7 @@
         width: 200px;
     }
 }
-/* Add Contact Modal */
+
 .contacts-modal-overlay {
     position: fixed;
     inset: 0;
@@ -841,7 +841,7 @@
     background: #648b71;
     color: white;
 }
-/* Chỉnh sửa ghi chú riêng */
+
 .contacts-note-editor {
     display: flex;
     flex-direction: column;
@@ -887,4 +887,23 @@
 .contacts-note-actions button:last-child {
     background: #648b71;
     color: white;
+}
+
+.contacts-sort {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #777;
+}
+
+.contacts-sort select {
+    border: none;
+    background: transparent;
+    color: #333;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    padding: 5px;
 }

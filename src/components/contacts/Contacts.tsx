@@ -37,6 +37,7 @@ export default function Contacts() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditingNote, setIsEditingNote] = useState(false);
     const [noteDraft, setNoteDraft] = useState('');
+    const [sortBy, setSortBy] = useState('default');
 
     const selectedContact = contacts.find(item => item.id === selectedId) ?? contacts[0];
 
@@ -64,9 +65,38 @@ export default function Contacts() {
         });
     }, [contacts, search, department, status, category]);
 
+    const sortedContacts = useMemo(() => {
+        const result = [...filteredContacts];
+        switch (sortBy) {
+            case 'name-asc':
+                result.sort((a, b) =>
+                    a.name.localeCompare(b.name, 'vi')
+                );
+                break;
+            case 'name-desc':
+                result.sort((a, b) =>
+                    b.name.localeCompare(a.name, 'vi')
+                );
+                break;
+            case 'department':
+                result.sort((a, b) =>
+                    a.department.localeCompare(b.department, 'vi')
+                );
+                break;
+            case 'status':
+                result.sort((a, b) =>
+                    a.status.localeCompare(b.status, 'vi')
+                );
+                break;
+            default:
+                break;
+        }
+        return result;
+    }, [filteredContacts, sortBy]);
+
     const totalPages = Math.max(1, Math.ceil(filteredContacts.length / PAGE_SIZE));
 
-    const pageContacts = filteredContacts.slice(
+    const pageContacts = sortedContacts.slice(
         (currentPage - 1) * PAGE_SIZE,
         currentPage * PAGE_SIZE
     );
@@ -128,18 +158,8 @@ export default function Contacts() {
             .toUpperCase();
 
         const newContact: Contact = {
-            id: Math.max(0, ...contacts.map(contact => contact.id)) + 1,
-            name,
-            email,
-            job,
-            department,
-            status: 'Đang hoạt động',
-            location,
-            avatar: '',
-            initials,
-            favorite: false,
-            groups: [],
-            note: ''
+            id: Math.max(0, ...contacts.map(contact => contact.id)) + 1, name, email, job, department,
+            status: 'Đang hoạt động', location, avatar: '', initials, favorite: false, groups: [], note: ''
         };
 
         setContacts(prev => [newContact, ...prev]);
@@ -326,7 +346,19 @@ export default function Contacts() {
                             </div>
                         </div>
 
-                        <span className="contacts-sort">Sắp xếp: <b>Gần đây</b>⌄</span>
+                        <div className="contacts-sort">
+                            <span>Sắp xếp:</span>
+                            <select value={sortBy} onChange={event => {
+                                    setSortBy(event.target.value);
+                                    setCurrentPage(1);}}>
+
+                                <option value="default">Mặc định</option>
+                                <option value="name-asc">Tên A–Z</option>
+                                <option value="name-desc">Tên Z–A</option>
+                                <option value="department">Bộ phận</option>
+                                <option value="status">Trạng thái</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

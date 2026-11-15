@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState , type FormEvent} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUsers,
@@ -35,6 +35,7 @@ export default function Contacts() {
     const [status, setStatus] = useState('Tất cả');
     const [category, setCategory] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const selectedContact = contacts.find(item => item.id === selectedId) ?? contacts[0];
 
@@ -83,6 +84,58 @@ export default function Contacts() {
             )
         );
     };
+    const handleAddContact = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
+        const name = String(formData.get('name') || '').trim();
+        const email = String(formData.get('email') || '').trim();
+        const job = String(formData.get('job') || '').trim();
+        const department = String(formData.get('department') || '');
+        const location = String(formData.get('location') || '').trim();
+
+        if (!name || !email || !job || !department || !location) {
+            return;
+        }
+
+        const initials = name
+            .split(/\s+/)
+            .map(word => word[0])
+            .slice(-2)
+            .join('')
+            .toUpperCase();
+
+        const newContact: Contact = {
+            id: Math.max(0, ...contacts.map(contact => contact.id)) + 1,
+            name,
+            email,
+            job,
+            department,
+            status: 'Đang hoạt động',
+            location,
+            avatar: '',
+            initials,
+            favorite: false,
+            groups: [],
+            note: ''
+        };
+
+        setContacts(prev => [newContact, ...prev]);
+
+        // Chuyển về danh sách tất cả liên hệ
+        setCategory('all');
+        setSearch('');
+        setDepartment('Tất cả');
+        setStatus('Tất cả');
+        setCurrentPage(1);
+
+        // Chọn liên hệ vừa tạo
+        setSelectedId(newContact.id);
+
+        // Đóng biểu mẫu
+        setIsAddModalOpen(false);
+    };
 
     const activeCount = contacts.filter(
         item => item.status === 'Đang hoạt động'
@@ -95,12 +148,10 @@ export default function Contacts() {
     return (
         <div className="contacts-app">
 
-            {/* Sidebar điều hướng chính */}
             <div className="contacts-main-sidebar">
                 <LeftSideBar isUser={true} />
             </div>
 
-            {/* Sidebar Danh bạ */}
             <aside className="contacts-sidebar">
                 <div className="contacts-workspace">
                     <span>/</span>
@@ -185,7 +236,6 @@ export default function Contacts() {
                 </div>
             </aside>
 
-            {/* Khu vực danh sách liên hệ */}
             <main className="contacts-center">
 
                 <header className="contacts-center-header">
@@ -198,7 +248,7 @@ export default function Contacts() {
                         <span className="contacts-total">{filteredContacts.length}</span>
                     </div>
 
-                    <button className="contacts-add-button">
+                    <button className="contacts-add-button" onClick={() => setIsAddModalOpen(true)}>
                         <FontAwesomeIcon icon={faUserPlus} />
                         Thêm liên hệ
                     </button>
@@ -354,7 +404,6 @@ export default function Contacts() {
                 </footer>
             </main>
 
-            {/* Khu vực chi tiết liên hệ */}
             <aside className="contacts-detail">
                 <header className="contacts-detail-header">
                     <strong>Thông tin liên hệ</strong>
@@ -465,6 +514,78 @@ export default function Contacts() {
                     </>
                 )}
             </aside>
+            {isAddModalOpen && (
+                <div className="contacts-modal-overlay">
+                    <div className="contacts-modal">
+                        <div className="contacts-modal-header">
+                            <h3>Thêm liên hệ mới</h3>
+
+                            <button
+                                type="button"
+                                onClick={() => setIsAddModalOpen(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleAddContact}>
+                            <label>Họ và tên</label>
+                            <input
+                                name="name"
+                                type="text"
+                                placeholder="Nhập họ và tên"
+                                required
+                            />
+
+                            <label>Email</label>
+                            <input
+                                name="email"
+                                type="email"
+                                placeholder="example@email.com"
+                                required
+                            />
+
+                            <label>Chức vụ</label>
+                            <input
+                                name="job"
+                                type="text"
+                                placeholder="Nhập chức vụ"
+                                required
+                            />
+
+                            <label>Bộ phận</label>
+                            <select name="department" required defaultValue="">
+                                <option value="" disabled>Chọn bộ phận</option>
+                                <option value="Thiết kế">Thiết kế</option>
+                                <option value="Phát triển">Phát triển</option>
+                                <option value="Vận hành">Vận hành</option>
+                                <option value="Nội dung">Nội dung</option>
+                            </select>
+
+                            <label>Địa điểm</label>
+                            <input
+                                name="location"
+                                type="text"
+                                placeholder="Nhập địa điểm"
+                                required
+                            />
+
+                            <div className="contacts-modal-actions">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddModalOpen(false)}
+                                >
+                                    Hủy
+                                </button>
+
+                                <button type="submit">
+                                    Thêm liên hệ
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

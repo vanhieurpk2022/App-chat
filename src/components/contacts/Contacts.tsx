@@ -1,5 +1,4 @@
-
-import { useMemo, useState , type FormEvent} from 'react';
+import {useMemo, useState, type FormEvent} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUsers,
@@ -36,6 +35,9 @@ export default function Contacts() {
     const [category, setCategory] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditingNote, setIsEditingNote] = useState(false);
+    const [noteDraft, setNoteDraft] = useState('');
+    const [sortBy, setSortBy] = useState('default');
 
     const selectedContact = contacts.find(item => item.id === selectedId) ?? contacts[0];
 
@@ -63,9 +65,38 @@ export default function Contacts() {
         });
     }, [contacts, search, department, status, category]);
 
+    const sortedContacts = useMemo(() => {
+        const result = [...filteredContacts];
+        switch (sortBy) {
+            case 'name-asc':
+                result.sort((a, b) =>
+                    a.name.localeCompare(b.name, 'vi')
+                );
+                break;
+            case 'name-desc':
+                result.sort((a, b) =>
+                    b.name.localeCompare(a.name, 'vi')
+                );
+                break;
+            case 'department':
+                result.sort((a, b) =>
+                    a.department.localeCompare(b.department, 'vi')
+                );
+                break;
+            case 'status':
+                result.sort((a, b) =>
+                    a.status.localeCompare(b.status, 'vi')
+                );
+                break;
+            default:
+                break;
+        }
+        return result;
+    }, [filteredContacts, sortBy]);
+
     const totalPages = Math.max(1, Math.ceil(filteredContacts.length / PAGE_SIZE));
 
-    const pageContacts = filteredContacts.slice(
+    const pageContacts = sortedContacts.slice(
         (currentPage - 1) * PAGE_SIZE,
         currentPage * PAGE_SIZE
     );
@@ -84,6 +115,26 @@ export default function Contacts() {
             )
         );
     };
+
+    const handleSaveNote = () => {
+        if (!selectedContact) return;
+
+        setContacts(prev =>
+            prev.map(contact =>
+                contact.id === selectedContact.id
+                    ? { ...contact, note: noteDraft.trim() }
+                    : contact
+            )
+        );
+
+        setIsEditingNote(false);
+    };
+
+    const handleCancelNote = () => {
+        setNoteDraft(selectedContact?.note ?? '');
+        setIsEditingNote(false);
+    };
+
     const handleAddContact = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -107,18 +158,8 @@ export default function Contacts() {
             .toUpperCase();
 
         const newContact: Contact = {
-            id: Math.max(0, ...contacts.map(contact => contact.id)) + 1,
-            name,
-            email,
-            job,
-            department,
-            status: 'Đang hoạt động',
-            location,
-            avatar: '',
-            initials,
-            favorite: false,
-            groups: [],
-            note: ''
+            id: Math.max(0, ...contacts.map(contact => contact.id)) + 1, name, email, job, department,
+            status: 'Đang hoạt động', location, avatar: '', initials, favorite: false, groups: [], note: ''
         };
 
         setContacts(prev => [newContact, ...prev]);
@@ -305,7 +346,19 @@ export default function Contacts() {
                             </div>
                         </div>
 
-                        <span className="contacts-sort">Sắp xếp: <b>Gần đây</b>⌄</span>
+                        <div className="contacts-sort">
+                            <span>Sắp xếp:</span>
+                            <select value={sortBy} onChange={event => {
+                                    setSortBy(event.target.value);
+                                    setCurrentPage(1);}}>
+
+                                <option value="default">Mặc định</option>
+                                <option value="name-asc">Tên A–Z</option>
+                                <option value="name-desc">Tên Z–A</option>
+                                <option value="department">Bộ phận</option>
+                                <option value="status">Trạng thái</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -504,11 +557,20 @@ export default function Contacts() {
                         <section className="contacts-note">
                             <div className="contacts-section-title">
                                 <h4>Ghi chú riêng</h4>
-                                <button title="Chỉnh sửa ghi chú">
-                                    <FontAwesomeIcon icon={faPen} />
-                                </button>
+                                {!isEditingNote && (
+                                    <button title="Chỉnh sửa ghi chú" onClick={() => {setNoteDraft(selectedContact.note ?? '');setIsEditingNote(true);}}>
+                                        <FontAwesomeIcon icon={faPen} />
+                                    </button>
+                                )}
                             </div>
-                            <p>{selectedContact.note}</p>
+                            {isEditingNote ? (
+                                <div className="contacts-note-editor"><textarea value={noteDraft} onChange={event => setNoteDraft(event.target.value)} placeholder="Nhập ghi chú riêng..." rows={4}/>
+                                    <div className="contacts-note-actions">
+                                        <button type="button" onClick={handleCancelNote}>Hủy</button>
+                                        <button type="button" onClick={handleSaveNote}>Lưu ghi chú</button>
+                                    </div>
+                                </div>
+                            ):(<p> {selectedContact.note || 'Chưa có ghi chú riêng.'}</p>)}
                             <small>♙ Chỉ bạn nhìn thấy ghi chú này</small>
                         </section>
                     </>

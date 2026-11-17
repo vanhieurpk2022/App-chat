@@ -13,7 +13,7 @@ export interface ChatTemp {
 }
 const initialState: ChatTemp = {
     UserListHoder: [],
-    selectedUser: "",
+    selectedUser: null,
     chatMess: [],
     isRoom: false,
     chatRoom: null,

@@ -51,11 +51,11 @@ export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom 
                     {/* Header */}
                     <div >
                         <div className="d-flex flex-column align-items-center justify-content-center pt-4">
-                            <div className="rounded-circle overflow-hidden shadow-sm mb-3 flex-shrink-0" style={{ width: "96px", height: "96px" }}>
+                            <div className="rounded-circle overflow-hidden shadow-sm mb-3 flex-shrink-0" style={{ width: "56px", height: "56px" }}>
                                 <img src="https://placehold.co/400" width={"100%"} height={"100%"} style={{ objectFit: "cover" }} alt="" />
                             </div>
                             <span className="fs-4 fw-semibold text-break text-center px-2">{title}</span>
-
+                            <span className="small">{isRoom ? "Cộng đồng" : ""}</span>
 
                             <div className="d-flex flex-row justify-content-center mt-4 gap-2">
                                 <div className="d-flex flex-column align-items-center gap-2 text-center" style={{ width: "80px" }}>

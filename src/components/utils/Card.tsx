@@ -1,8 +1,8 @@
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+
 interface CardProps {
-    imgUrl: string;
     name: string;
     time: string;
     message: string;
@@ -10,10 +10,12 @@ interface CardProps {
     status?: boolean;
     countMess?: number;
     isCommunity?: boolean;
+    imgUser?: string;
+    imgRoom?: string;
     onClick: () => void;
 }
 
-export default function Card({ imgUrl, name, time, message, isActive = false, status = false, countMess = 0, isCommunity = false, onClick }: CardProps) {
+export default function Card({ name, time, message, isActive = false, status = false, countMess = 0, isCommunity = false, onClick, imgUser, imgRoom }: CardProps) {
     const hasUnread = countMess > 0;
 
     return (
@@ -24,7 +26,7 @@ export default function Card({ imgUrl, name, time, message, isActive = false, st
             {/* Avatar */}
             <div className="position-relative flex-shrink-0">
                 <div className="rounded-circle overflow-hidden" style={{ width: 52, height: 52 }}>
-                    <img src={imgUrl} alt="" width="100%" height="100%" style={{ objectFit: "cover" }} />
+                    <img src={isCommunity ? imgRoom : imgUser} alt="" width="100%" height="100%" style={{ objectFit: "cover" }} />
                 </div>
                 {status && (
                     <span className="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white" style={{ width: 14, height: 14 }} />

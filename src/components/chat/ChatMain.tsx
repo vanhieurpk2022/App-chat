@@ -12,10 +12,11 @@ interface ChatMainProps {
     isShow: boolean;
     isRoom: boolean;
     countNumber?: number;
+    imgUrl: string;
 }
 
 
-export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber }: ChatMainProps) {
+export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber, imgUrl }: ChatMainProps) {
     const [showEmoji, setEmoij] = useState(false);
     const bottomRef = useRef<HTMLDivElement>(null);
     const isLoading = useSelector((state: RootState) => state.chat.isLoading);
@@ -34,7 +35,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
             <div className="d-flex flex-row align-items-center gap-3 border-bottom w-100 p-3">
 
                 <div className="rounded-circle overflow-hidden flex-shrink-0 " style={{ width: "44px", height: "44px" }}>
-                    <img style={{ objectFit: 'cover' }} src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" width={100} height={100} alt="" />
+                    <img style={{ objectFit: 'cover' }} src={imgUrl} width="100%" height="100%" alt="" />
                 </div>
 
                 <div >

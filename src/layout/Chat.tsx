@@ -6,6 +6,8 @@ import LeftSideBar from "../components/utils/LeftSideBar";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import ChatBlank from "../components/chat/ChatBlank";
+import logoMul from "../assets/Gemini_Generated_Image_gb6akfgb6akfgb6a.png"
+import logoUser from "../assets/6596121.png"
 import NotifyDisconnect from "../components/chat/NotifyDisconnect";
 
 export default function Chat() {
@@ -34,7 +36,7 @@ export default function Chat() {
 
             <div className="flex-grow-1 d-flex flex-column h-100 w-100" style={{ minWidth: 0 }}>
                 {getSelectUser ?
-                    <ChatMain isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
+                    <ChatMain imgUrl={isRoom ? logoMul : logoUser} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
                     : <ChatBlank />}
             </div>
 

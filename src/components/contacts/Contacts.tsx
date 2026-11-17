@@ -38,6 +38,15 @@ export default function Contacts() {
     const [isEditingNote, setIsEditingNote] = useState(false);
     const [noteDraft, setNoteDraft] = useState('');
     const [sortBy, setSortBy] = useState('default');
+    const [groups, setGroups] = useState<string[]>(() =>
+        Array.from(new Set(contactsData.flatMap(contact => contact.groups)))
+    );
+    const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+    const [newGroupName, setNewGroupName] = useState('');
+    const [groupError, setGroupError] = useState('');
+    const [isManageGroupsOpen, setIsManageGroupsOpen] = useState(false);
+    const [groupDraft, setGroupDraft] = useState<string[]>([]);
 
     const selectedContact = contacts.find(item => item.id === selectedId) ?? contacts[0];
 
@@ -61,9 +70,12 @@ export default function Contacts() {
                 (category === 'active' && contact.status === 'Đang hoạt động') ||
                 (category === 'favorite' && contact.favorite);
 
-            return matchesSearch && matchesDepartment && matchesStatus && matchesCategory;
+            const matchesGroup =
+                selectedGroup === null || contact.groups.includes(selectedGroup);
+
+            return (matchesSearch && matchesDepartment && matchesStatus && matchesCategory && matchesGroup);
         });
-    }, [contacts, search, department, status, category]);
+    }, [contacts, search, department, status, category, selectedGroup]);
 
     const sortedContacts = useMemo(() => {
         const result = [...filteredContacts];
@@ -103,6 +115,13 @@ export default function Contacts() {
 
     const changeCategory = (value: string) => {
         setCategory(value);
+        setSelectedGroup(null);
+        setCurrentPage(1);
+    };
+
+    const handleSelectGroup = (groupName: string) => {
+        setSelectedGroup(groupName);
+        setCategory('all');
         setCurrentPage(1);
     };
 
@@ -178,6 +197,48 @@ export default function Contacts() {
         setIsAddModalOpen(false);
     };
 
+    const handleCreateGroup = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const groupName = newGroupName.trim();
+        if (!groupName) {
+            setGroupError('Vui lòng nhập tên nhóm.');
+            return;
+        }
+        const isDuplicate = groups.some(
+            group => group.toLowerCase() === groupName.toLowerCase()
+        );
+        if (isDuplicate) {
+            setGroupError('Tên nhóm này đã tồn tại.');
+            return;
+        }
+        setGroups(prev => [...prev, groupName]);
+        setNewGroupName('');
+        setGroupError('');
+        setIsGroupModalOpen(false);
+    };
+
+    const handleOpenManageGroups = () => {
+        if (!selectedContact) return;
+
+        // Lấy các nhóm mà liên hệ hiện tại đang tham gia
+        setGroupDraft([...selectedContact.groups]);
+        setIsManageGroupsOpen(true);
+    };
+
+    const handleSaveContactGroups = () => {
+        if (!selectedContact) return;
+
+        setContacts(prev =>
+            prev.map(contact =>
+                contact.id === selectedContact.id
+                    ? { ...contact, groups: [...groupDraft] }
+                    : contact
+            )
+        );
+
+        setIsManageGroupsOpen(false);
+    };
+
     const activeCount = contacts.filter(
         item => item.status === 'Đang hoạt động'
     ).length;
@@ -242,27 +303,27 @@ export default function Contacts() {
 
                 <div className="contacts-group-heading">
                     <span>NHÓM CỦA BẠN</span>
-                    <button title="Thêm nhóm">
+                    <button title="Thêm nhóm" onClick={() => {
+                            setNewGroupName('');
+                            setGroupError('');
+                            setIsGroupModalOpen(true);
+                    }}>
                         <FontAwesomeIcon icon={faPlus} />
                     </button>
                 </div>
 
                 <div className="contacts-groups">
-                    <button>
-                        <i className="group-dot dot-purple" />
-                        <span>Đội ngũ thiết kế</span>
-                        <small>6</small>
-                    </button>
-                    <button>
-                        <i className="group-dot dot-green" />
-                        <span>Dự án Mộc</span>
-                        <small>5</small>
-                    </button>
-                    <button>
-                        <i className="group-dot dot-blue" />
-                        <span>Mầm Studio</span>
-                        <small>12</small>
-                    </button>
+                    {groups.map((group, index) => {
+                        const memberCount = contacts.filter(contact => contact.groups.includes(group)).length;
+
+                        return (
+                            <button key={group} className={selectedGroup === group ? 'selected' : ''} onClick={() => handleSelectGroup(group)}>
+                                <i className={`group-dot dot-${index % 3}`} />
+                                <span>{group}</span>
+                                <small>{memberCount}</small>
+                            </button>
+                        );
+                    })}
                 </div>
 
                 <div className="contacts-invite">
@@ -282,9 +343,10 @@ export default function Contacts() {
                 <header className="contacts-center-header">
                     <div>
                         <strong>
-                            {category === 'all' && 'Tất cả liên hệ'}
-                            {category === 'active' && 'Đang hoạt động'}
-                            {category === 'favorite' && 'Yêu thích'}
+                            {selectedGroup ? selectedGroup
+                                : category === 'all' ? 'Tất cả liên hệ'
+                                    : category === 'active' ? 'Đang hoạt động'
+                                        : 'Yêu thích'}
                         </strong>
                         <span className="contacts-total">{filteredContacts.length}</span>
                     </div>
@@ -536,8 +598,10 @@ export default function Contacts() {
 
                         <section className="contacts-common-groups">
                             <div className="contacts-section-title">
-                                <h4>Nhóm chung</h4>
-                                <small>{selectedContact.groups.length} nhóm</small>
+                                <h4>Nhóm của liên hệ</h4>
+                                <button type="button" onClick={handleOpenManageGroups} title="Quản lý nhóm">
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
                             </div>
 
                             {selectedContact.groups.map((group, index) => (
@@ -645,6 +709,90 @@ export default function Contacts() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {isGroupModalOpen && (
+                <div className="contacts-modal-overlay">
+                    <div className="contacts-modal">
+                        <div className="contacts-modal-header">
+                            <h3>Tạo nhóm mới</h3>
+                            <button type="button" onClick={() => setIsGroupModalOpen(false)}> × </button>
+                        </div>
+
+                        <form onSubmit={handleCreateGroup}>
+                            <label>Tên nhóm</label>
+                            <input
+                                type="text"
+                                value={newGroupName}
+                                onChange={event => {
+                                    setNewGroupName(event.target.value);
+                                    setGroupError('');
+                                }}
+                                placeholder="Nhập tên nhóm..."
+                                autoFocus
+                            />
+
+                            {groupError && (
+                                <p className="contacts-form-error">{groupError}</p>
+                            )}
+                            <div className="contacts-modal-actions">
+                                <button type="button" onClick={() => setIsGroupModalOpen(false)}>
+                                    Hủy
+                                </button>
+                                <button type="submit">
+                                    Tạo nhóm
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {isManageGroupsOpen && selectedContact && (
+                <div className="contacts-modal-overlay">
+                    <div className="contacts-modal">
+                        <div className="contacts-modal-header">
+                            <h3>Quản lý nhóm</h3>
+                            <button type="button" onClick={() => setIsManageGroupsOpen(false)}> × </button>
+                        </div>
+
+                        <p className="contacts-manage-description"> Chọn nhóm mà {selectedContact.name} muốn tham gia. </p>
+
+                        <div className="contacts-group-checkboxes">
+                            {groups.map(group => (
+                                <label key={group}>
+                                    <input
+                                        type="checkbox"
+                                        checked={groupDraft.includes(group)}
+                                        onChange={event => {
+                                            if (event.target.checked) {
+                                                setGroupDraft(prev => [
+                                                    ...prev,
+                                                    group
+                                                ]);
+                                            } else {
+                                                setGroupDraft(prev =>
+                                                    prev.filter(item => item !== group)
+                                                );
+                                            }
+                                        }}
+                                    />
+                                    <span>{group}</span>
+                                </label>
+                            ))}
+                        </div>
+
+                        <div className="contacts-modal-actions">
+                            <button type="button" onClick={() => setIsManageGroupsOpen(false)}>
+                                Hủy
+                            </button>
+
+                            <button type="button" onClick={handleSaveContactGroups}>
+                                Lưu thay đổi
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

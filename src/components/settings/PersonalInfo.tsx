@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 export default function PersonalInfo() {
     const [userStatus, setUserStatus] = useState('Đang hoạt động');
+    const [customStatus, setCustomStatus] = useState('');
+    const [isEditingStatus, setIsEditingStatus] = useState(false);
+    const [tempStatusText, setTempStatusText] = useState('');
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
 
     const [profileData, setProfileData] = useState({
         name: 'Hoàng An',
@@ -16,31 +22,83 @@ export default function PersonalInfo() {
 
     const [formData, setFormData] = useState(profileData);
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setAvatarUrl(imageUrl);
+        }
+    };
+
+    const handleSaveProfile = (e: React.FormEvent) => {
         e.preventDefault();
         setProfileData(formData);
         setIsEditing(false);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+    };
+
+    const handleSaveCustomStatus = () => {
+        setCustomStatus(tempStatusText);
+        setIsEditingStatus(false);
     };
 
     return (
         <div className="row g-4">
+            {saveSuccess && (
+                <div className="col-12">
+                    <div className="alert alert-success py-2 px-3 small d-flex align-items-center justify-content-between m-0">
+                        <span><i className="bi bi-check-circle-fill me-2"></i> Đã cập nhật thông tin hồ sơ thành công!</span>
+                        <button type="button" className="btn-close btn-sm" onClick={() => setSaveSuccess(false)}></button>
+                    </div>
+                </div>
+            )}
+
             <div className="col-lg-8">
                 <div className="card-box profile-hero-card mb-4">
-                    <div className="avatar-hero">
-                        {profileData.name.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase()}
-                    </div>
+                    {avatarUrl ? (
+                        <img
+                            src={avatarUrl}
+                            alt="Avatar"
+                            className="rounded-circle object-fit-cover"
+                            style={{ width: '72px', height: '72px' }}
+                        />
+                    ) : (
+                        <div className="avatar-hero">
+                            {profileData.name.split(' ').map(n => n[0]).join('').slice(-2).toUpperCase()}
+                        </div>
+                    )}
+
                     <div className="profile-title">
                         <h3 className="fw-bold m-0">{profileData.name}</h3>
-                        <div className="d-flex align-items-center mt-1">
-                            <span className="status-dot"></span>
-                            <span className="text-muted small ms-1">{userStatus}</span>
+                        <div className="d-flex align-items-center mt-1 gap-2">
+                            <div className="d-flex align-items-center">
+                                <span className={`status-dot ${userStatus === 'Đừng làm phiền' ? 'bg-danger' : userStatus === 'Tạm vắng' ? 'bg-warning' : ''}`}></span>
+                                <span className="text-muted small ms-1">{userStatus}</span>
+                            </div>
+                            {customStatus && (
+                                <span className="badge bg-light text-dark border fw-normal">
+                                    {customStatus}
+                                </span>
+                            )}
                         </div>
                         <div className="mt-2">
-                            <button className="btn btn-link btn-sm p-0 text-decoration-none text-primary">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                style={{ display: 'none' }}
+                                onChange={handleAvatarChange}
+                            />
+                            <button
+                                className="btn btn-link btn-sm p-0 text-decoration-none text-primary"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
                                 <i className="bi bi-camera me-1"></i> Thay ảnh
                             </button>
                         </div>
                     </div>
+
                     <div className="ms-auto">
                         <button
                             className="btn btn-primary btn-sm rounded-pill px-3 shadow-sm"
@@ -100,10 +158,30 @@ export default function PersonalInfo() {
                             <option value="Đừng làm phiền">🔴 Đừng làm phiền</option>
                         </select>
                     </div>
-                    <button className="btn btn-light btn-sm w-100 text-start d-flex align-items-center justify-content-between text-muted border-0 bg-light-subtle py-2">
-                        <span><i className="bi bi-emoji-smile me-2"></i> Đặt dòng trạng thái</span>
-                        <i className="bi bi-plus-lg"></i>
-                    </button>
+
+                    {!isEditingStatus ? (
+                        <button
+                            className="btn btn-light btn-sm w-100 text-start d-flex align-items-center justify-content-between text-muted border-0 bg-light-subtle py-2"
+                            onClick={() => { setTempStatusText(customStatus); setIsEditingStatus(true); }}
+                        >
+                            <span><i className="bi bi-emoji-smile me-2"></i> {customStatus || 'Đặt dòng trạng thái'}</span>
+                            <i className="bi bi-pencil-square"></i>
+                        </button>
+                    ) : (
+                        <div className="p-2 border rounded bg-light-subtle">
+                            <input
+                                type="text"
+                                className="form-control form-control-sm mb-2"
+                                placeholder="VD: 💻 Đang tập trung làm việc..."
+                                value={tempStatusText}
+                                onChange={(e) => setTempStatusText(e.target.value)}
+                            />
+                            <div className="d-flex justify-content-end gap-1">
+                                <button className="btn btn-sm btn-light py-0 px-2" onClick={() => setIsEditingStatus(false)}>Hủy</button>
+                                <button className="btn btn-sm btn-primary py-0 px-2" onClick={handleSaveCustomStatus}>Lưu</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="card-box workspace-card-bg">
@@ -130,14 +208,14 @@ export default function PersonalInfo() {
                             <button className="btn-close shadow-none" onClick={() => setIsEditing(false)}></button>
                         </div>
 
-                        <form onSubmit={handleSave}>
+                        <form onSubmit={handleSaveProfile}>
                             <div className="row g-3">
                                 <div className="col-12">
                                     <label className="form-label small fw-semibold">Họ và tên</label>
                                     <input
                                         type="text" className="form-control form-control-sm"
                                         value={formData.name}
-                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         required
                                     />
                                 </div>
@@ -146,7 +224,7 @@ export default function PersonalInfo() {
                                     <input
                                         type="email" className="form-control form-control-sm"
                                         value={formData.email}
-                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         required
                                     />
                                 </div>
@@ -155,7 +233,7 @@ export default function PersonalInfo() {
                                     <input
                                         type="text" className="form-control form-control-sm"
                                         value={formData.phone}
-                                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-md-6">
@@ -163,7 +241,7 @@ export default function PersonalInfo() {
                                     <input
                                         type="text" className="form-control form-control-sm"
                                         value={formData.job}
-                                        onChange={(e) => setFormData({...formData, job: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, job: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-md-6">
@@ -171,7 +249,23 @@ export default function PersonalInfo() {
                                     <input
                                         type="text" className="form-control form-control-sm"
                                         value={formData.department}
-                                        onChange={(e) => setFormData({...formData, department: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label small fw-semibold">Địa điểm</label>
+                                    <input
+                                        type="text" className="form-control form-control-sm"
+                                        value={formData.location}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label small fw-semibold">Múi giờ</label>
+                                    <input
+                                        type="text" className="form-control form-control-sm"
+                                        value={formData.timezone}
+                                        onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
                                     />
                                 </div>
                             </div>

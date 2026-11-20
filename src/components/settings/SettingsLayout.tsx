@@ -39,24 +39,28 @@ export default function SettingsLayout() {
 
                 <nav className="settings-menu">
                     <button
+                        type="button"
                         className={`settings-menu-item ${activeMenu === 'personal' ? 'active' : ''}`}
                         onClick={() => setActiveMenu('personal')}
                     >
                         <i className="bi bi-person me-2"></i> Thông tin cá nhân
                     </button>
                     <button
+                        type="button"
                         className={`settings-menu-item ${activeMenu === 'security' ? 'active' : ''}`}
                         onClick={() => setActiveMenu('security')}
                     >
                         <i className="bi bi-shield-lock me-2"></i> Tài khoản & bảo mật
                     </button>
                     <button
+                        type="button"
                         className={`settings-menu-item ${activeMenu === 'privacy' ? 'active' : ''}`}
                         onClick={() => setActiveMenu('privacy')}
                     >
                         <i className="bi bi-lock me-2"></i> Quyền riêng tư
                     </button>
                     <button
+                        type="button"
                         className={`settings-menu-item ${activeMenu === 'notifications' ? 'active' : ''}`}
                         onClick={() => setActiveMenu('notifications')}
                     >
@@ -65,7 +69,10 @@ export default function SettingsLayout() {
 
                     <div className="settings-menu-divider"></div>
 
-                    <button className="settings-menu-item text-danger border-0 bg-transparent">
+                    <button
+                        type="button"
+                        className="settings-menu-item text-danger border-0 bg-transparent"
+                    >
                         <i className="bi bi-box-arrow-right me-2"></i> Đăng xuất
                     </button>
                 </nav>

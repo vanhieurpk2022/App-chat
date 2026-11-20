@@ -13,25 +13,25 @@ import { chatSocket } from './wss/ChatWebSocket.ts'
 // main.tsx
 
 
-async function init() {
-  try {
-    await chatSocket.connect();
-    console.log("WebSocket connected!");
-  } catch (e) {
-    console.error("Lỗi kết nối Socket:", e);
-  }
+// async function init() {
+//   try {
+//     await chatSocket.connect();
+//     console.log("WebSocket connected!");
+//   } catch (e) {
+//     console.error("Lỗi kết nối Socket:", e);
+//   }
 
 
-  // 3. lúc này mới render, ChatListPanel mount với phiên đã sẵn sàng
-  createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    </StrictMode>
-  );
-}
-init();
+// 3. lúc này mới render, ChatListPanel mount với phiên đã sẵn sàng
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  </StrictMode>
+);
+// }
+// init();
 persistAuth(store);

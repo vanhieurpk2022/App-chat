@@ -16,7 +16,7 @@ export default function PrivacySettings() {
     const [saveSearchHistory, setSaveSearchHistory] = useState(true);
     const [noticeText, setNoticeText] = useState<string | null>(null);
 
-    const triggerNotice = (msg = '') => {
+    const triggerNotice = (msg = 'Đã cập nhật tùy chọn quyền riêng tư.') => {
         setNoticeText(msg);
         setTimeout(() => setNoticeText(null), 2500);
     };

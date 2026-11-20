@@ -23,14 +23,6 @@ export default function NotificationSettings() {
 
     return (
         <div className="row g-4">
-            {savedNotice && (
-                <div className="col-12">
-                    <div className="alert alert-success py-2 px-3 small m-0">
-                        <i className="bi bi-check-circle-fill me-2"></i>
-                        Đã lưu cài đặt thông báo.
-                    </div>
-                </div>
-            )}
 
             <div className="col-lg-8">
                 <div className="card-box mb-4">

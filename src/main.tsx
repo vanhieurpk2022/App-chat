@@ -3,25 +3,35 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import App from './App.tsx'
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { BrowserRouter } from 'react-router'
 import { Provider } from 'react-redux'
 import { store } from './store/store.ts'
 import { persistAuth } from './model/LoginSubcribe.ts'
-import { AuthSocketHandler } from './wss/AuthSocketHandler.ts'
 import { chatSocket } from './wss/ChatWebSocket.ts'
 
 
-// persistAuth(store);
-// AuthSocketHandler(store.dispatch);
-// chatSocket.connect().catch(console.error);
+// main.tsx
 
-createRoot(document.getElementById('root')!).render(
+
+// async function init() {
+//   try {
+//     await chatSocket.connect();
+//     console.log("WebSocket connected!");
+//   } catch (e) {
+//     console.error("Lỗi kết nối Socket:", e);
+//   }
+
+
+// 3. lúc này mới render, ChatListPanel mount với phiên đã sẵn sàng
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </Provider>
-
-  </StrictMode>,
-)
+  </StrictMode>
+);
+// }
+// init();
+persistAuth(store);

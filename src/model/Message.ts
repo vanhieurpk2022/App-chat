@@ -16,10 +16,11 @@ export interface Message {
     type: number;
 }
 
-
-
 export interface ChatPeopleFormat {
+    id: string;
     name: string;
-    user: InviteUser;
-    chatMess: ChatMess;
+    own: string;
+    createTime: string;
+    userList: InviteUser[]; // user ở trong phòng
+    chatData: ChatMess[]; // 
 }

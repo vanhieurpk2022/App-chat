@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 
 import {
+    faRightFromBracket,
     faSliders,
     faUserGroup
 } from "@fortawesome/free-solid-svg-icons";
@@ -24,12 +25,12 @@ interface LeftSideBarProps {
 }
 
 export default function LeftSideBar({
-                                        isChat = false,
-                                        isUser = false,
-                                        isFolder = false,
-                                        isBookMark = false,
-                                        isSettings = false
-                                    }: LeftSideBarProps) {
+    isChat = false,
+    isUser = false,
+    isFolder = false,
+    isBookMark = false,
+    isSettings = false
+}: LeftSideBarProps) {
 
     const iconSize = {
         width: '42px',
@@ -51,9 +52,8 @@ export default function LeftSideBar({
             <div className="d-flex flex-column gap-3 mt-4">
                 <NavLink
                     to="/chat"
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${
-                        isChat ? 'active' : ''
-                    }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isChat ? 'active' : ''
+                        }`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faComments} className="fs-4 chat-icon" />
@@ -61,27 +61,24 @@ export default function LeftSideBar({
 
                 <NavLink
                     to="/contacts"
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${
-                        isUser ? 'active' : ''
-                    }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isUser ? 'active' : ''
+                        }`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faUserGroup} className="fs-4 chat-icon" />
                 </NavLink>
 
                 <span
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${
-                        isFolder ? 'active' : ''
-                    }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isFolder ? 'active' : ''
+                        }`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faFolderOpen} className="fs-4 chat-icon" />
                 </span>
 
                 <span
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${
-                        isBookMark ? 'active' : ''
-                    }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isBookMark ? 'active' : ''
+                        }`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faBookmark} className="fs-4 chat-icon" />
@@ -103,16 +100,28 @@ export default function LeftSideBar({
                     >
                         <FontAwesomeIcon icon={faCircleQuestion} className="fs-4 chat-icon" />
                     </span>
-
                     <NavLink
                         to="/settings"
-                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${
-                            isSettings ? 'active' : ''
-                        }`}
+                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? 'active' : ''
+                            }`}
                         style={iconSize}
                         title="Cài đặt"
                     >
-                        <FontAwesomeIcon icon={faSliders} className="fs-4 chat-icon" />
+                        <span>
+                            <FontAwesomeIcon icon={faSliders} className="fs-4 chat-icon" />
+                        </span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/settings"
+                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? 'active' : ''
+                            }`}
+                        style={iconSize}
+                        title="Cài đặt"
+                    >
+                        <span>
+                            <FontAwesomeIcon icon={faRightFromBracket} className="fs-4 chat-icon" />
+                        </span>
                     </NavLink>
 
                     <span
@@ -127,7 +136,7 @@ export default function LeftSideBar({
                         />
                     </span>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

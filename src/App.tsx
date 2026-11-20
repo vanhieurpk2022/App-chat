@@ -1,4 +1,3 @@
-
 import './App.css';
 
 import { Routes, Route, Navigate } from 'react-router';
@@ -11,6 +10,7 @@ import type { AppDispatch } from './store/store';
 import { ChatSocketHandle } from './wss/ChatSocketHandle';
 import { AuthSocketHandler } from './wss/AuthSocketHandler';
 import { authService } from './services/authService';
+import Settings from './layout/Settings';
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +32,8 @@ function App() {
                 <Route path="/chat" element={<Chat />} />
 
                 <Route path="/contacts" element={<Contacts />} />
+
+                <Route path="/settings" element={<Settings />} />
 
                 <Route path="/" element={<Navigate to="/chat" replace />} />
 

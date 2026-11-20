@@ -1,4 +1,3 @@
-
 import {
     faBookmark,
     faCircleQuestion,
@@ -10,6 +9,7 @@ import {
 
 import {
     faRightFromBracket,
+    faSliders,
     faUserGroup
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -21,13 +21,15 @@ interface LeftSideBarProps {
     isUser?: boolean;
     isFolder?: boolean;
     isBookMark?: boolean;
+    isSettings?: boolean;
 }
 
 export default function LeftSideBar({
     isChat = false,
     isUser = false,
     isFolder = false,
-    isBookMark = false
+    isBookMark = false,
+    isSettings = false
 }: LeftSideBarProps) {
 
     const iconSize = {
@@ -48,8 +50,6 @@ export default function LeftSideBar({
             </span>
 
             <div className="d-flex flex-column gap-3 mt-4">
-
-                {/* Chat */}
                 <NavLink
                     to="/chat"
                     className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isChat ? 'active' : ''
@@ -59,7 +59,6 @@ export default function LeftSideBar({
                     <FontAwesomeIcon icon={faComments} className="fs-4 chat-icon" />
                 </NavLink>
 
-                {/* Contacts */}
                 <NavLink
                     to="/contacts"
                     className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isUser ? 'active' : ''
@@ -87,7 +86,6 @@ export default function LeftSideBar({
             </div>
 
             <div className="d-flex flex-column gap-3 mt-auto">
-
                 <span
                     className="p-2 d-inline-flex align-items-center justify-content-center rounded-3"
                     style={iconSize}
@@ -96,20 +94,35 @@ export default function LeftSideBar({
                 </span>
 
                 <div className="d-flex flex-column gap-3 mb-3">
-
                     <span
                         className="p-2 d-inline-flex align-items-center justify-content-center rounded-3"
                         style={iconSize}
                     >
                         <FontAwesomeIcon icon={faCircleQuestion} className="fs-4 chat-icon" />
                     </span>
-
-                    <span
-                        className="p-2 d-inline-flex align-items-center justify-content-center rounded-3"
+                    <NavLink
+                        to="/settings"
+                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? 'active' : ''
+                            }`}
                         style={iconSize}
+                        title="Cài đặt"
                     >
-                        <FontAwesomeIcon icon={faRightFromBracket} className="fs-4 chat-icon" />
-                    </span>
+                        <span>
+                            <FontAwesomeIcon icon={faSliders} className="fs-4 chat-icon" />
+                        </span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/settings"
+                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? 'active' : ''
+                            }`}
+                        style={iconSize}
+                        title="Cài đặt"
+                    >
+                        <span>
+                            <FontAwesomeIcon icon={faRightFromBracket} className="fs-4 chat-icon" />
+                        </span>
+                    </NavLink>
 
                     <span
                         className="p-2 d-inline-flex align-items-center justify-content-center rounded-circle"
@@ -123,7 +136,7 @@ export default function LeftSideBar({
                         />
                     </span>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

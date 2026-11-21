@@ -1,4 +1,5 @@
 import {useMemo, useState, type FormEvent} from 'react';
+import { useNavigate } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUsers,
@@ -47,6 +48,7 @@ export default function Contacts() {
     const [groupError, setGroupError] = useState('');
     const [isManageGroupsOpen, setIsManageGroupsOpen] = useState(false);
     const [groupDraft, setGroupDraft] = useState<string[]>([]);
+    const navigate = useNavigate();
 
     const selectedContact = contacts.find(item => item.id === selectedId) ?? contacts[0];
 
@@ -255,12 +257,6 @@ export default function Contacts() {
             </div>
 
             <aside className="contacts-sidebar">
-                <div className="contacts-workspace">
-                    <span>/</span>
-                    <span>Không gian sáng tạo</span>
-                    <span>⌄</span>
-                </div>
-
                 <div className="contacts-sidebar-heading">
                     <h2>Danh bạ</h2>
                     <p>Kết nối trong không gian của bạn</p>
@@ -334,7 +330,7 @@ export default function Contacts() {
                 </div>
 
                 <div className="contacts-sync">
-                    <span>♧</span> Danh bạ đã được đồng bộ
+                    Danh bạ đã được đồng bộ
                 </div>
             </aside>
 
@@ -369,7 +365,6 @@ export default function Contacts() {
                                 setCurrentPage(1);
                             }}
                         />
-                        <span>⌘ K</span>
                     </div>
 
                     <div className="contacts-filter-row">
@@ -551,7 +546,11 @@ export default function Contacts() {
                             </span>
 
                             <div className="contacts-actions">
-                                <button className="message-button">
+                                <button type="button"
+                                    onClick={() => {
+                                        if (!selectedContact) return;
+                                        navigate(`/chat?contactId=${encodeURIComponent(String(selectedContact.id))}`);
+                                    }}>
                                     <FontAwesomeIcon icon={faComment} />
                                     Nhắn tin
                                 </button>
@@ -635,7 +634,7 @@ export default function Contacts() {
                                     </div>
                                 </div>
                             ):(<p> {selectedContact.note || 'Chưa có ghi chú riêng.'}</p>)}
-                            <small>♙ Chỉ bạn nhìn thấy ghi chú này</small>
+                            <small>Chỉ bạn nhìn thấy ghi chú này</small>
                         </section>
                     </>
                 )}

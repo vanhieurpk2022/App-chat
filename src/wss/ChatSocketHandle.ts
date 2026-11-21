@@ -19,6 +19,8 @@ export function ChatSocketHandle(dispatch: AppDispatch) {
             if (msg.status === "success") {
                 dispatch(setRoomMessage(msg.data))
             }
+        }),
+        chatSocket.on(wssEvent.SEND_CHAT, (msg) => {
         })
 
 

@@ -1,9 +1,10 @@
 import { CameraVideo, ChatDots, CircleFill, EmojiSmile, HandThumbsUpFill, LayoutSidebarReverse, Person, PlusLg, Search, Telephone } from "react-bootstrap-icons";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import type { ChatMess } from "../../model/Message";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { chatService } from "../../services/chatService";
 
 interface ChatMainProps {
     title?: string | null;
@@ -18,16 +19,27 @@ interface ChatMainProps {
 
 export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber, imgUrl }: ChatMainProps) {
     const [showEmoji, setEmoij] = useState(false);
+    const [inputMessage, setInputMessage] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
     const isLoading = useSelector((state: RootState) => state.chat.isLoading);
     const user = useSelector((state: RootState) => state.auth.user);
+    const selectUser = useSelector((state: RootState) => state.chat.selectedUser);
 
     const list = [...(messages)].reverse();
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "instant" });
     }, [messages])
 
+    const handleEmojiPicker = (emojiData: EmojiClickData) => {
+        setInputMessage((prev) => prev + emojiData.emoji)
+    }
 
+    const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            chatService.sendChat(isRoom ? "room" : "people", selectUser ?? "", inputMessage)
+        }
+    }
 
     return (
         <div className="h-100 w-100 d-flex flex-column ">
@@ -158,7 +170,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                 <div className="position-relative d-flex ms-3" style={{ width: "98%" }}>
                     {/* Icon trái */}
                     <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} />
-                    <input className=" form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px" }} placeholder="Aa" />
+                    <input value={inputMessage} onKeyDown={handleSendMessage} onChange={(e) => setInputMessage(e.target.value)} className=" form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px" }} placeholder="Aa" />
 
                     {/* Icon phải */}
                     <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">
@@ -176,7 +188,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                 </div>
                 {showEmoji && (
                     <div className="position-absolute end-0 mb-5 bottom-0 me-2">
-                        <EmojiPicker />
+                        <EmojiPicker onEmojiClick={handleEmojiPicker} />
                     </div>
                 )}
 

@@ -10,10 +10,11 @@ export interface ChatMess {
 }
 
 export interface Message {
+    id: number;
     name: string;
+    type: number;
     to: string;
     mes: string;
-    type: number;
 }
 
 export interface ChatPeopleFormat {

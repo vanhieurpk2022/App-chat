@@ -10,8 +10,8 @@ export const chatService = {
     chatRoomGetMes: (name: string, page: number) => {
         chatSocket.send(wssEvent.CHAT_ROOM_CHAT_MES, { name, page });
     },
-    sendChat: (type: string, to: string, mes: string): SocketResponse<void> | null => {
-        return null;
+    sendChat: (type: string, to: string, mes: string) => {
+        chatSocket.send(wssEvent.SEND_CHAT, { type, to, mes });
     }
 }
 

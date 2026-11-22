@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { UserList, UserListHoder } from "../model/User";
 import type { ChatMess, ChatPeopleFormat, Message } from "../model/Message";
+import { nowString } from "../model/formatTime";
 
 // đang lấy cho cây panel
 export interface ChatTemp {
@@ -49,20 +50,46 @@ const chatSlice = createSlice({
             state.chatRoom = action.payload;
             state.isLoading = false;
         },
+        // khi tin nhắn != selectedUser (Nhận tin nhắn đến)
         getNewMessage: (state, action: PayloadAction<Message>) => {
-            const userHolder = state.UserListHoder.find((name) => name.userList.name === action.payload.name);
-            userHolder?.mes.push(action.payload)
+            const isIncomingRoom = action.payload.type === 1;
+            const key = isIncomingRoom ? action.payload.to : action.payload.name;
+
+            // name: người gửi
+            // to: Đến phòng
+            const isCurrentActiveChat = isIncomingRoom
+                ? state.isRoom && state.selectedUser === action.payload.to
+                : !state.isRoom && state.selectedUser === action.payload.name;
+
+
+            const targetHolder = state.UserListHoder.find((item) => item.userList.name === key);
+
+            if (isCurrentActiveChat) {
+                if (isIncomingRoom) {
+                    state.chatRoom?.chatData.unshift(action.payload);
+                } else {
+                    state.chatMess.unshift(action.payload);
+                }
+            } else {
+                targetHolder?.mes.push(action.payload);
+            }
+            if (targetHolder && action.payload.createAt) targetHolder.userList.actionTime = action.payload.createAt;
         },
-        addOwnMessage: (state, action: PayloadAction<ChatMess>) => {
-            pushMessage(state, action.payload);
+        // bản thân gửi tin nhắn đi
+        // đẩy việc thêm createdAt lên
+        addOwnerMessage: (state, action: PayloadAction<ChatMess>) => {
+            const name = action.payload.to;
+            const holder = state.UserListHoder.find((prev) => prev.userList.name === name);
+
+            if (state.isRoom) state.chatRoom?.chatData.unshift(action.payload);
+            else state.chatMess.unshift(action.payload);
+
+            if (holder && action.payload.createAt) holder.userList.actionTime = action.payload.createAt;
         }
     }
 })
 
-function pushMessage(state: ChatTemp, m: ChatMess) {
-    if (m.type === 1) state.chatRoom?.chatData.push(m);   // phòng
-    else state.chatMess.push(m);                          // 1-1
-}
-export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnMessage, getNewMessage } = chatSlice.actions;
+
+export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage } = chatSlice.actions;
 export default chatSlice.reducer;
 

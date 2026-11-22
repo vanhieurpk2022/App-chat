@@ -1,5 +1,6 @@
+import { nowString } from "../model/formatTime";
 import { wssEvent } from "../model/webSocketUrl";
-import { setPeopleMessage, setRoomMessage, setUsers } from "../store/chatSlice";
+import { getNewMessage, setPeopleMessage, setRoomMessage, setUsers } from "../store/chatSlice";
 import type { AppDispatch } from "../store/store";
 import { chatSocket } from "./ChatWebSocket";
 
@@ -20,7 +21,11 @@ export function ChatSocketHandle(dispatch: AppDispatch) {
                 dispatch(setRoomMessage(msg.data))
             }
         }),
+        // lắng nghe người khác gửi tin nhắn đến
         chatSocket.on(wssEvent.SEND_CHAT, (msg) => {
+            if (msg.status === "success") {
+                dispatch(getNewMessage({ ...msg.data, createAt: nowString() }))
+            }
         })
 
 

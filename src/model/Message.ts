@@ -9,12 +9,14 @@ export interface ChatMess {
     type: number;
 }
 
+// bỏ vào holder
 export interface Message {
     id: number;
     name: string;
     type: number;
     to: string;
     mes: string;
+    createAt?: string; // ko có time khi nhận sendchat
 }
 
 export interface ChatPeopleFormat {

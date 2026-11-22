@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Card from "../utils/Card";
 import ChatListPanelHeader from "../utils/ChatListPanelHeader";
 import { userSend } from "../../services/userService";
@@ -22,6 +22,7 @@ export default function ChatListPanel() {
         if (authUser) {
             userSend.getUserList();
         }
+
 
     }, [authUser])
 

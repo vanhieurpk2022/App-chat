@@ -1,7 +1,5 @@
-import type { ChatMess, ChatPeopleFormat } from "../model/Message";
 import { wssEvent } from "../model/webSocketUrl";
 import { chatSocket } from "../wss/ChatWebSocket";
-import type { SocketResponse } from "../wss/request";
 
 export const chatService = {
     chatPeopleGetMes: (name: string, page: number) => {

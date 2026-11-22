@@ -2,9 +2,12 @@ import { CameraVideo, ChatDots, CircleFill, EmojiSmile, HandThumbsUpFill, Layout
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import type { ChatMess } from "../../model/Message";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { chatService } from "../../services/chatService";
+import { addOwnerMessage } from "../../store/chatSlice";
+import { formatClock, nowString } from "../../model/formatTime";
+import { decodeEmoji, encodeEmoji } from "../../model/EncodingEmoji";
 
 interface ChatMainProps {
     title?: string | null;
@@ -18,6 +21,7 @@ interface ChatMainProps {
 
 
 export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber, imgUrl }: ChatMainProps) {
+    const dispatch = useDispatch();
     const [showEmoji, setEmoij] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -35,9 +39,20 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     }
 
     const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const safeMessage = encodeEmoji(inputMessage);
         if (e.key === "Enter") {
             e.preventDefault();
-            chatService.sendChat(isRoom ? "room" : "people", selectUser ?? "", inputMessage)
+            chatService.sendChat(isRoom ? "room" : "people", selectUser ?? "", safeMessage)
+            if (!user || !selectUser || !inputMessage) return;
+            dispatch(addOwnerMessage({
+                id: (messages.at(-1)?.id ?? 0) + 1,
+                name: user,
+                to: selectUser,
+                mes: safeMessage,
+                type: isRoom ? 1 : 0,                    // 0 = chat 1-1, 1 = phòng
+                createAt: nowString(),
+            }))
+            setInputMessage("");
         }
     }
 
@@ -108,13 +123,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         const isFirstOfGroup = !prev || prev.name !== mess.name; // đầu cụm tin liên tiếp
                         const isLastOfGroup = !next || next.name !== mess.name;  // cuối cụm
                         const mt = isFirstOfGroup ? "mt-3" : "mt-1";             // tin cùng cụm sát nhau hơn
-                        const time = mess.createAt?.slice(11, 16);
+                        const time = formatClock(mess.createAt);
 
                         if (mess.name === user) {
                             return (
                                 <div key={mess.id} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
                                     <div className="bg-primary-subtle shadow px-3 py-2 rounded-3 text-break" style={{ maxWidth: "calc(60% - 48px)" }}>
-                                        {mess.mes}
+                                        {decodeEmoji(mess.mes)}
                                     </div>
                                     {isLastOfGroup && (
                                         <span className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</span>
@@ -138,7 +153,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                                                 <br />
                                             </>
                                         )}
-                                        <span className="text-break">{mess.mes}</span>
+                                        <span className="text-break">{decodeEmoji(mess.mes)}</span>
                                     </div>
                                     {isLastOfGroup && (
                                         <div className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</div>
@@ -174,9 +189,9 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
                     {/* Icon phải */}
                     <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">
-                        <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        <button onClick={() => setEmoij(prev => !prev)} className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
                             style={{ cursor: "pointer" }}>
-                            <EmojiSmile size={24} onClick={() => setEmoij(prev => !prev)} />
+                            <EmojiSmile size={24} />
                         </button>
 
                         <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
@@ -187,9 +202,17 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
                 </div>
                 {showEmoji && (
-                    <div className="position-absolute end-0 mb-5 bottom-0 me-2">
-                        <EmojiPicker onEmojiClick={handleEmojiPicker} />
-                    </div>
+                    <>
+                        <div
+                            className="position-fixed top-0 start-0 w-100 h-100"
+                            style={{ zIndex: 1 }}
+                            onMouseDown={(e) => e.preventDefault()}   // giữ focus ở ô nhập
+                            onClick={() => setEmoij(false)}
+                        />
+                        <div className="position-absolute end-0 mb-5 bottom-0 me-2" style={{ zIndex: 2 }}>
+                            <EmojiPicker onEmojiClick={handleEmojiPicker} />
+                        </div>
+                    </>
                 )}
 
             </div>

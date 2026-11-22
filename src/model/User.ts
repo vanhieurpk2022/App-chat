@@ -1,4 +1,4 @@
-import type { ChatMess } from "./Message";
+import type { ChatMess, Message } from "./Message";
 
 export interface Account {
     user: string;
@@ -18,7 +18,7 @@ export interface InviteUser {
 
 export interface UserListHoder {
     userList: UserList; // lấy thông tin user cho leftSideBar
-    mes: ChatMess[]; // giữ tin nhắn mới
+    mes: Message[]; // giữ tin nhắn mới
     actionTime?: string; // cho biết thời gian user đứng ở chat đó
 }
 

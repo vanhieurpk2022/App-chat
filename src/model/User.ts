@@ -18,8 +18,9 @@ export interface InviteUser {
 
 export interface UserListHoder {
     userList: UserList; // lấy thông tin user cho leftSideBar
-    mes: Message[]; // giữ tin nhắn mới
+    mes: Message | null; // giữ tin nhắn mới chưa đọc
     actionTime?: string; // cho biết thời gian user đứng ở chat đó
+    unReadCount: number;
 }
 
 

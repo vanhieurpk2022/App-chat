@@ -28,10 +28,10 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     const isLoading = useSelector((state: RootState) => state.chat.isLoading);
     const user = useSelector((state: RootState) => state.auth.user);
     const selectUser = useSelector((state: RootState) => state.chat.selectedUser);
-
     const list = [...(messages)].reverse();
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "instant" });
+
     }, [messages])
 
     const handleEmojiPicker = (emojiData: EmojiClickData) => {

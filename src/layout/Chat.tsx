@@ -9,7 +9,6 @@ import ChatBlank from "../components/chat/ChatBlank";
 import logoMul from "../assets/Gemini_Generated_Image_gb6akfgb6akfgb6a.png"
 import logoUser from "../assets/6596121.png"
 import NotifyDisconnect from "../components/chat/NotifyDisconnect";
-import { decodeEmoji } from "../model/EncodingEmoji";
 
 export default function Chat() {
     const [rightProfile, setRightProfile] = useState(false);

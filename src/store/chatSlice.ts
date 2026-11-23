@@ -28,14 +28,21 @@ const chatSlice = createSlice({
         setUsers: (state, action: PayloadAction<UserList[]>) => {
             state.UserListHoder = action.payload.map(user => ({
                 userList: user,
-                mes: [],
+                mes: null,
                 actionTime: "",
+                unReadCount: 0,
             }));
         },
         selectChat: (state, action: PayloadAction<string>) => {
             state.selectedUser = action.payload;
             state.chatMess = [];
             state.isLoading = true;
+
+            // reset Read
+            const holder = state.UserListHoder.find((item) => item.userList.name === action.payload);
+            if (holder) {
+                holder.unReadCount = 0;
+            }
         },
         setPeopleMessage: (state, action: PayloadAction<ChatMess[]>) => {
             state.chatRoom = null;;
@@ -53,39 +60,76 @@ const chatSlice = createSlice({
         // khi tin nhắn != selectedUser (Nhận tin nhắn đến)
         getNewMessage: (state, action: PayloadAction<Message>) => {
             const isIncomingRoom = action.payload.type === 1;
-            const key = isIncomingRoom ? action.payload.to : action.payload.name;
+            const conversationKey = isIncomingRoom ? action.payload.to : action.payload.name;
 
-            // name: người gửi
-            // to: Đến phòng
             const isCurrentActiveChat = isIncomingRoom
                 ? state.isRoom && state.selectedUser === action.payload.to
                 : !state.isRoom && state.selectedUser === action.payload.name;
 
-
-            const targetHolder = state.UserListHoder.find((item) => item.userList.name === key);
-
+            // 1. Đẩy vào khung chat nếu đang mở màn hình chat đó
             if (isCurrentActiveChat) {
                 if (isIncomingRoom) {
                     state.chatRoom?.chatData.unshift(action.payload);
                 } else {
                     state.chatMess.unshift(action.payload);
                 }
-            } else {
-                targetHolder?.mes.push(action.payload);
             }
-            if (targetHolder && action.payload.createAt) targetHolder.userList.actionTime = action.payload.createAt;
+
+            // 2. Tìm cuộc hội thoại trong danh sách bên trái
+            const targetIndex = state.UserListHoder.findIndex(
+                (item) => item.userList.name === conversationKey
+            );
+
+            if (targetIndex !== -1) {
+                const holder = state.UserListHoder[targetIndex];
+
+                // 👉 Luôn cập nhật tin nhắn mới nhất vào holder.mes để hiện preview trên Card
+                holder.mes = action.payload;
+                holder.userList.actionTime = action.payload.createAt ?? "";
+
+                // 👉 Nếu ĐANG MỞ xem thì unReadCount = 0, nếu CHƯA MỞ thì tăng thêm 1
+                if (isCurrentActiveChat) {
+                    holder.unReadCount = 0;
+                } else {
+                    holder.unReadCount = (holder.unReadCount || 0) + 1;
+                }
+
+                // Đẩy cuộc hội thoại lên vị trí đầu tiên của danh sách
+                state.UserListHoder.splice(targetIndex, 1);
+                state.UserListHoder.unshift(holder);
+            } else {
+                // Người lạ nhắn đến lần đầu -> Thêm mới vào đầu danh sách
+                state.UserListHoder.unshift({
+                    userList: {
+                        name: conversationKey,
+                        type: action.payload.type,
+                        actionTime: action.payload.createAt ?? ""
+                    },
+                    mes: action.payload,
+                    unReadCount: isCurrentActiveChat ? 0 : 1
+                });
+            }
         },
         // bản thân gửi tin nhắn đi
         // đẩy việc thêm createdAt lên
         addOwnerMessage: (state, action: PayloadAction<ChatMess>) => {
-            const name = action.payload.to;
-            const holder = state.UserListHoder.find((prev) => prev.userList.name === name);
-
             if (state.isRoom) state.chatRoom?.chatData.unshift(action.payload);
             else state.chatMess.unshift(action.payload);
 
-            if (holder && action.payload.createAt) holder.userList.actionTime = action.payload.createAt;
-        }
+            if (state.selectedUser) {
+                const targetIndex = state.UserListHoder.findIndex((item) => item.userList.name === state.selectedUser);
+                if (targetIndex !== -1) {
+                    const holder = state.UserListHoder[targetIndex];
+                    holder.mes = action.payload;
+                    holder.userList.actionTime = action.payload.createAt ?? "";
+                    holder.unReadCount = 0;
+
+                    // di chuyển tin nhắn lên đầu
+                    state.UserListHoder.splice(targetIndex, 1);
+                    state.UserListHoder.unshift(holder);
+                }
+            }
+        },
     }
 })
 

@@ -11,7 +11,7 @@ export interface ChatMess {
 
 // bỏ vào holder
 export interface Message {
-    id: number;
+    id?: number;
     name: string;
     type: number;
     to: string;

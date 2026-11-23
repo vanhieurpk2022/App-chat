@@ -27,13 +27,14 @@ export default function ChatListPanel() {
     }, [authUser])
 
     const handleSelectUser = (userName: string) => {
-        dispatch(selectChat(userName))
-        // check type
-        if (users.find((us) => us.userList.name === userName)?.userList.type === 1) {
-            dispatch(isRoomChat(true));
+        dispatch(selectChat(userName));
+        const target = users.find((us) => us.userList.name === userName);
+        const isGroup = target?.userList.type === 1;
+
+        dispatch(isRoomChat(isGroup));
+        if (isGroup) {
             chatService.chatRoomGetMes(userName, 1);
         } else {
-            dispatch(isRoomChat(false));
             chatService.chatPeopleGetMes(userName, 1);
         }
 
@@ -45,7 +46,7 @@ export default function ChatListPanel() {
             <div className="mt-3 d-flex flex-column flex-grow-1 overflow-y-auto overflow-x-hidden gap-2" style={{ minHeight: 0 }}>
                 {users.map((user) => (
                     <Card onClick={() => handleSelectUser(user.userList.name)} key={user.userList.name} imgRoom={logoRoom} imgUser={logoUser} isCommunity={user.userList.type == 1}
-                        name={user.userList.name} time={formatTime(user.userList.actionTime)} message="" isActive={getUserSelect === user.userList.name} />
+                        name={user.userList.name} time={formatTime(user.userList.actionTime)} message={user.mes?.mes ?? ""} isActive={getUserSelect === user.userList.name} countMess={user.unReadCount} />
                 ))}
 
             </div>

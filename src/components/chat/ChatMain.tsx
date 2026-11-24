@@ -7,7 +7,7 @@ import type { RootState } from "../../store/store";
 import { chatService } from "../../services/chatService";
 import { addOwnerMessage } from "../../store/chatSlice";
 import { formatClock, nowString } from "../../model/formatTime";
-import { decodeEmoji, encodeEmoji } from "../../model/EncodingEmoji";
+import { decodeEmoji, encodeEmoji, isEmojiOnly } from "../../model/EncodingEmoji";
 
 interface ChatMainProps {
     title?: string | null;
@@ -55,6 +55,21 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
             setInputMessage("");
         }
     }
+
+    const sendIconLike = (icon: string) => {
+        if (!user || !selectUser) return;
+        const msg = encodeEmoji(icon);
+        chatService.sendChat(isRoom ? "room" : "people", selectUser ?? "", msg)
+        dispatch(addOwnerMessage({
+            id: (messages.at(-1)?.id ?? 0) + 1,
+            name: user,
+            to: selectUser,
+            mes: msg,
+            type: isRoom ? 1 : 0,                    // 0 = chat 1-1, 1 = phòng
+            createAt: nowString(),
+        }))
+    }
+
 
     return (
         <div className="h-100 w-100 d-flex flex-column ">
@@ -125,11 +140,14 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         const mt = isFirstOfGroup ? "mt-3" : "mt-1";             // tin cùng cụm sát nhau hơn
                         const time = formatClock(mess.createAt);
 
+                        const text = decodeEmoji(mess.mes);
+                        const emoijOnly = isEmojiOnly(text);
+
                         if (mess.name === user) {
                             return (
                                 <div key={mess.id} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
-                                    <div className="bg-primary-subtle shadow px-3 py-2 rounded-3 text-break" style={{ maxWidth: "calc(60% - 48px)" }}>
-                                        {decodeEmoji(mess.mes)}
+                                    <div className={`bg-primary-subtle shadow px-3 py-2 rounded-3 text-break ${emoijOnly ? "fs-3" : ""}`} style={{ maxWidth: "calc(60% - 48px)" }}>
+                                        {text}
                                     </div>
                                     {isLastOfGroup && (
                                         <span className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</span>
@@ -153,7 +171,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                                                 <br />
                                             </>
                                         )}
-                                        <span className="text-break">{decodeEmoji(mess.mes)}</span>
+                                        <span className={`text-break ${emoijOnly ? "fs-3" : ""}`}>{text}</span>
                                     </div>
                                     {isLastOfGroup && (
                                         <div className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</div>
@@ -185,7 +203,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                 <div className="position-relative d-flex ms-3" style={{ width: "98%" }}>
                     {/* Icon trái */}
                     <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} />
-                    <input value={inputMessage} onKeyDown={handleSendMessage} onChange={(e) => setInputMessage(e.target.value)} className=" form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px" }} placeholder="Aa" />
+                    <input value={inputMessage} onKeyDown={handleSendMessage} onChange={(e) => setInputMessage(e.target.value)} className=" form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px", fontSize: "15px" }} placeholder="Aa" />
 
                     {/* Icon phải */}
                     <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">
@@ -194,7 +212,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                             <EmojiSmile size={24} />
                         </button>
 
-                        <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3" onClick={() => sendIconLike("\u{1F44D}")}
                             style={{ cursor: "pointer" }}>
                             <HandThumbsUpFill className="text-warning" size={24} />
                         </button>

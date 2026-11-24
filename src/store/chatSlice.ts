@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { UserList, UserListHoder } from "../model/User";
 import type { ChatMess, ChatPeopleFormat, Message } from "../model/Message";
 import { nowString } from "../model/formatTime";
+import { decodeEmoji } from "../model/EncodingEmoji";
 
 // đang lấy cho cây panel
 export interface ChatTemp {
@@ -83,11 +84,11 @@ const chatSlice = createSlice({
             if (targetIndex !== -1) {
                 const holder = state.UserListHoder[targetIndex];
 
-                // 👉 Luôn cập nhật tin nhắn mới nhất vào holder.mes để hiện preview trên Card
+                // cập nhật tin nhắn mới nhất vào holder.mes để hiện preview trên Card
                 holder.mes = action.payload;
                 holder.userList.actionTime = action.payload.createAt ?? "";
 
-                // 👉 Nếu ĐANG MỞ xem thì unReadCount = 0, nếu CHƯA MỞ thì tăng thêm 1
+                // ĐANG MỞ xem thì unReadCount = 0, nếu CHƯA MỞ thì tăng thêm 1
                 if (isCurrentActiveChat) {
                     holder.unReadCount = 0;
                 } else {

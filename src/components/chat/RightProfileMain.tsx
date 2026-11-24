@@ -16,9 +16,9 @@ export default function RightProfileMain() {
     return (
         <div className="d-flex gap-3 flex-column">
             {/* Ảnh */}
-            <div className="d-flex align-items-center px-3">
+            <div className="d-flex align-items-center px-3" onClick={() => setShowImage(prev => !prev)} style={{ cursor: "pointer" }}>
                 <span className={titleClass}>Ảnh</span>
-                <CaretDownFill onClick={() => setShowImage(prev => !prev)} className="text-secondary small flex-shrink-0" style={caretStyle(showImage)} />
+                <CaretDownFill className="text-secondary small flex-shrink-0" style={caretStyle(showImage)} />
             </div>
             {showImage && <>
                 <div className="d-flex flex-row gap-2 justify-content-start px-3">
@@ -38,9 +38,9 @@ export default function RightProfileMain() {
             </>}
 
             {/* File */}
-            <div className="d-flex align-items-center px-3">
+            <div className="d-flex align-items-center px-3" onClick={() => setShowFile(prev => !prev)} style={{ cursor: "pointer" }}>
                 <h5 className={titleClass}>File</h5>
-                <CaretDownFill onClick={() => setShowFile(prev => !prev)} className="text-secondary small flex-shrink-0" style={caretStyle(showFile)} />
+                <CaretDownFill className="text-secondary small flex-shrink-0" style={caretStyle(showFile)} />
             </div>
             {showFile && <>
                 <div className="d-flex flex-column gap-2 px-3">
@@ -83,9 +83,9 @@ export default function RightProfileMain() {
             </>}
 
             {/* Link */}
-            <div className="d-flex align-items-center px-3">
+            <div className="d-flex align-items-center px-3" onClick={() => setShowLink(prev => !prev)} style={{ cursor: "pointer" }}>
                 <h5 className={titleClass}>Link</h5>
-                <CaretDownFill onClick={() => setShowLink(prev => !prev)} className="text-secondary small flex-shrink-0" style={caretStyle(showLink)} />
+                <CaretDownFill className="text-secondary small flex-shrink-0" style={caretStyle(showLink)} />
             </div>
             {showLink && <>
                 <div className="d-flex flex-column gap-2 px-3">

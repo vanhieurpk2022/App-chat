@@ -2,8 +2,12 @@ const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
 const MAX_IMAGE_MB = 5;
 const MAX_VIDEO_MB = 50;
+const MAX_FILE_MB = 10;
 
-export type MediaType = "image" | "video";
+export type MediaType = "image" | "video" | "file";
+
+const LABEL: Record<MediaType, string> = { image: "Ảnh", video: "Video", file: "File" };
+const MAX_MB: Record<MediaType, number> = { image: MAX_IMAGE_MB, video: MAX_VIDEO_MB, file: MAX_FILE_MB };
 
 export interface UploadResult {
     url: string;
@@ -24,26 +28,26 @@ export class Cloudinary {
         let type: MediaType;
         if (IMAGE_TYPES.includes(file.type)) type = "image";
         else if (VIDEO_TYPES.includes(file.type)) type = "video";
-        else throw new Error("Chỉ chấp nhận ảnh (jpg, png, webp, gif) hoặc video (mp4, webm, mov)");
+        else type = "file"; // pdf, docx, zip, ...
 
-        const maxMB = type === "image" ? MAX_IMAGE_MB : MAX_VIDEO_MB;
-        if (file.size > maxMB * 1024 * 1024) {
-            throw new Error(`${type === "image" ? "Ảnh" : "Video"} không được vượt quá ${maxMB}MB`)
+        if (file.size > MAX_MB[type] * 1024 * 1024) {
+            throw new Error(`${LABEL[type]} không được vượt quá ${MAX_MB[type]}MB`);
         }
         return type;
     }
 
     async upload(file: File): Promise<UploadResult> {
         const type = this.getMediaType(file);
+        const resourceType = type === "file" ? "raw" : type; // Cloudinary gọi file thường là "raw"
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_present", this.uploadPresent);
+        formData.append("upload_preset", this.uploadPresent);
 
         const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${this.cloudName}/${type}/upload`,
+            `https://api.cloudinary.com/v1_1/${this.cloudName}/${resourceType}/upload`,
             { method: "POST", body: formData }
-        )
+        );
         const data = await res.json();
 
         if (!res.ok) {

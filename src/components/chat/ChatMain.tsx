@@ -1,4 +1,4 @@
-import { CameraVideo, ChatDots, CircleFill, EmojiSmile, HandThumbsUpFill, LayoutSidebarReverse, Person, PlusLg, Search, Telephone } from "react-bootstrap-icons";
+import { CameraVideo, ChatDots, CircleFill, EmojiSmile, FileEarmarkText, HandThumbsUpFill, LayoutSidebarReverse, Person, PlusLg, Search, Telephone } from "react-bootstrap-icons";
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import type { ChatMess } from "../../model/Message";
@@ -8,6 +8,11 @@ import { chatService } from "../../services/chatService";
 import { addOwnerMessage } from "../../store/chatSlice";
 import { formatClock, nowString } from "../../model/formatTime";
 import { decodeEmoji, encodeEmoji, isEmojiOnly } from "../../model/EncodingEmoji";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import FilePreviewItem from "../utils/FilePreviewItem";
+import { cloudinaryService } from "../../services/cloudinaryService";
+import MessageContent from "../utils/MessageContent ";
 
 interface ChatMainProps {
     title?: string | null;
@@ -29,6 +34,11 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     const user = useSelector((state: RootState) => state.auth.user);
     const selectUser = useSelector((state: RootState) => state.chat.selectedUser);
     const list = [...(messages)].reverse();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const MAX_FILE = 10;
+    const [selectedFile, setSelectedFile] = useState<File[]>([]);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "instant" });
 
@@ -38,21 +48,44 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
         setInputMessage((prev) => prev + emojiData.emoji)
     }
 
-    const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        const safeMessage = encodeEmoji(inputMessage);
-        if (e.key === "Enter") {
-            e.preventDefault();
-            chatService.sendChat(isRoom ? "room" : "people", selectUser ?? "", safeMessage)
-            if (!user || !selectUser || !inputMessage) return;
+    const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+        e.preventDefault();
+
+        const text = inputMessage.trim();
+        if (!user || !selectUser) return;
+        if (!text && selectedFile.length === 0) return;
+
+        let nextId = messages.at(-1)?.id ?? 0;
+        const send = (content: string) => {
+            chatService.sendChat(isRoom ? "room" : "people", selectUser, content);
             dispatch(addOwnerMessage({
-                id: (messages.at(-1)?.id ?? 0) + 1,
+                id: ++nextId,
                 name: user,
                 to: selectUser,
-                mes: safeMessage,
-                type: isRoom ? 1 : 0,                    // 0 = chat 1-1, 1 = phòng
+                mes: content,
+                type: isRoom ? 1 : 0, // 0 = chat 1-1, 1 = phòng
                 createAt: nowString(),
-            }))
+            }));
+        }
+
+        if (text) {
+            send(encodeEmoji(text));
             setInputMessage("");
+        }
+
+        if (selectedFile.length === 0) return;
+        setLoading(true);
+        try {
+            const results = await Promise.all(
+                selectedFile.map((prev) => cloudinaryService.upload(prev))
+            );
+            results.forEach((prev) => send(prev.url))
+            setSelectedFile([]);
+        } catch (error) {
+            console.log("Upload file thất bại:", error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -68,6 +101,21 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
             type: isRoom ? 1 : 0,                    // 0 = chat 1-1, 1 = phòng
             createAt: nowString(),
         }))
+    }
+
+
+    // file Event
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newFiles = Array.from(e.target.files ?? []);
+        if (newFiles.length === 0) return;
+
+        setSelectedFile((prev) => [...prev, ...newFiles].slice(0, MAX_FILE));
+        e.target.value = "";
+    }
+
+
+    const removeFile = (index: number) => {
+        setSelectedFile((prev) => prev.filter((_, i) => i !== index));
     }
 
 
@@ -142,12 +190,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
                         const text = decodeEmoji(mess.mes);
                         const emoijOnly = isEmojiOnly(text);
+                        const scrollToBottom = () => bottomRef.current?.scrollIntoView({ behavior: "instant" });
 
                         if (mess.name === user) {
                             return (
                                 <div key={mess.id} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
                                     <div className={`bg-primary-subtle shadow px-3 py-2 rounded-3 text-break ${emoijOnly ? "fs-3" : ""}`} style={{ maxWidth: "calc(60% - 48px)" }}>
-                                        {text}
+                                        <MessageContent text={text} onLoad={scrollToBottom} />
                                     </div>
                                     {isLastOfGroup && (
                                         <span className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</span>
@@ -171,7 +220,8 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                                                 <br />
                                             </>
                                         )}
-                                        <span className={`text-break ${emoijOnly ? "fs-3" : ""}`}>{text}</span>
+                                        <span className={`text-break ${emoijOnly ? "fs-3" : ""}`}>
+                                            <MessageContent text={text} onLoad={scrollToBottom} /></span>
                                     </div>
                                     {isLastOfGroup && (
                                         <div className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</div>
@@ -199,11 +249,34 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
             </div>
             <div className="d-flex flex-column position-relative mt-auto p-3">
+                {/* File Preview */}
+                {selectedFile.length > 0 && (
+                    <div className="d-flex flex-row flex-wrap align-items-start gap-3 ms-3 py-2">
+                        {selectedFile.map((file, i) => (
+                            <FilePreviewItem
+                                key={`${file.name}-${file.lastModified}-${i}`}
+                                file={file}
+                                onRemove={() => removeFile(i)}
+                            />
+                        ))}
+                    </div>
+                )}
+
+
                 {/* Công cụ */}
                 <div className="position-relative d-flex ms-3" style={{ width: "98%" }}>
                     {/* Icon trái */}
-                    <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} />
-                    <input value={inputMessage} onKeyDown={handleSendMessage} onChange={(e) => setInputMessage(e.target.value)} className=" form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px", fontSize: "15px" }} placeholder="Aa" />
+                    <input multiple ref={fileInputRef} className="d-none" type="file" onChange={handleFileChange} />
+                    {loading ?
+                        <div className="position-absolute start-0 top-50 translate-middle-y ms-3 d-flex">
+                            <div className="spinner-border text-primary" role="status" style={{ width: 24, height: 24, borderWidth: 3 }}>
+                                <span className="visually-hidden">Đang tải...</span>
+                            </div>
+                        </div>
+                        :
+                        <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} onClick={() => fileInputRef.current?.click()} />
+                    }
+                    <input value={inputMessage} onKeyDown={handleSendMessage} onChange={(e) => setInputMessage(e.target.value)} className="shadow-none border-secondary form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px", fontSize: "16px" }} placeholder="Aa" />
 
                     {/* Icon phải */}
                     <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">

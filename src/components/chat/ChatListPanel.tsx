@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Card from "../utils/Card";
 import ChatListPanelHeader from "../utils/ChatListPanelHeader";
 import { userSend } from "../../services/userService";
@@ -9,7 +9,7 @@ import { selectChat, isRoomChat } from "../../store/chatSlice";
 import { formatTime } from "../../model/formatTime";
 import logoRoom from "../../assets/Gemini_Generated_Image_gb6akfgb6akfgb6a.png"
 import logoUser from "../../assets/6596121.png"
-import { decodeEmoji } from "../../model/EncodingEmoji";
+import { checkIsFile, decodeEmoji } from "../../model/EncodingEmoji";
 
 
 
@@ -45,10 +45,19 @@ export default function ChatListPanel() {
         <div className="d-flex flex-column h-100 " style={{ minHeight: 0 }}>
             <ChatListPanelHeader />
             <div className="mt-3 d-flex flex-column flex-grow-1 overflow-y-auto overflow-x-hidden gap-2" style={{ minHeight: 0 }}>
-                {users.map((user) => (
-                    <Card onClick={() => handleSelectUser(user.userList.name)} key={user.userList.name} imgRoom={logoRoom} imgUser={logoUser} isCommunity={user.userList.type == 1}
-                        name={user.userList.name} time={formatTime(user.userList.actionTime)} message={decodeEmoji(user.mes?.mes ?? "")} isActive={getUserSelect === user.userList.name} countMess={user.unReadCount} />
-                ))}
+                {users.map((user) => {
+                    const rawContent = decodeEmoji(user.mes?.mes ?? "").trim();
+                    const rawUrl = checkIsFile(rawContent);
+                    const isRoom = user.mes?.type === 1;
+                    const msg = !rawUrl ?
+                        "" : user.mes?.name === authUser ?
+                            `Bạn: ${rawUrl}`
+                            : isRoom ? `${user.mes?.name}: ${rawUrl}` : rawUrl;
+
+                    return (<Card onClick={() => handleSelectUser(user.userList.name)} key={user.userList.name} imgRoom={logoRoom} imgUser={logoUser} isCommunity={user.userList.type == 1}
+                        name={user.userList.name} time={formatTime(user.userList.actionTime)} message={msg} isActive={getUserSelect === user.userList.name} countMess={user.unReadCount} />
+                    )
+                })}
 
             </div>
 

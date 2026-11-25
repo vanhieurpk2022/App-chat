@@ -1,12 +1,27 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import '../../css/Settings.css';
 import PersonalInfo from './PersonalInfo';
 import SecuritySettings from './SecuritySettings';
 import PrivacySettings from './PrivacySettings';
 import NotificationSettings from './NotificationSettings';
+import { logout } from '../../store/authSlice';
+import type { RootState } from '../../store/store';
 
 export default function SettingsLayout() {
     const [activeMenu, setActiveMenu] = useState('personal');
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const currentUser = useSelector((state: RootState) => state.auth.user) || 'Hoàng An';
+
+    const handleConfirmLogout = () => {
+        dispatch(logout());
+        setShowLogoutConfirm(false);
+        navigate('/login');
+    };
 
     const renderContent = () => {
         switch (activeMenu) {
@@ -72,15 +87,18 @@ export default function SettingsLayout() {
                     <button
                         type="button"
                         className="settings-menu-item text-danger border-0 bg-transparent"
+                        onClick={() => setShowLogoutConfirm(true)}
                     >
                         <i className="bi bi-box-arrow-right me-2"></i> Đăng xuất
                     </button>
                 </nav>
 
                 <div className="current-account-badge">
-                    <div className="avatar-circle-sm">HA</div>
+                    <div className="avatar-circle-sm">
+                        {currentUser.slice(0, 2).toUpperCase()}
+                    </div>
                     <div className="account-info">
-                        <div className="fw-semibold small">Hoàng An</div>
+                        <div className="fw-semibold small">{currentUser}</div>
                         <div className="text-muted extra-small">Tài khoản đang đăng nhập</div>
                     </div>
                 </div>
@@ -95,6 +113,33 @@ export default function SettingsLayout() {
                     {renderContent()}
                 </div>
             </main>
+
+            {showLogoutConfirm && (
+                <div className="modal-backdrop-custom">
+                    <div className="modal-card-custom animate-fade-in" style={{ maxWidth: '380px' }}>
+                        <h6 className="fw-bold mb-2">Xác nhận đăng xuất</h6>
+                        <p className="text-muted small mb-4">
+                            Bạn có chắc muốn đăng xuất khỏi phiên làm việc hiện tại không?
+                        </p>
+                        <div className="d-flex justify-content-end gap-2">
+                            <button
+                                type="button"
+                                className="btn btn-light btn-sm px-3"
+                                onClick={() => setShowLogoutConfirm(false)}
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-danger btn-sm px-3"
+                                onClick={handleConfirmLogout}
+                            >
+                                Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

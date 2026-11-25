@@ -9,8 +9,11 @@ interface AuthState {
     error: string | null;
 }
 
+const saved = loadSaved(AUTH_KEY) ?? {};
+
 const initialState: AuthState = {
-    ...loadSaved(AUTH_KEY),
+    user: saved.user ?? null,
+    reLoginCode: saved.reLoginCode ?? null,
     pendingUser: null,
     status: "idle",
     error: null
@@ -25,11 +28,12 @@ const authSlice = createSlice({
             state.status = "loading";
             state.error = null;
         },
-        loginSucess: (state, action: PayloadAction<string>) => {
+        loginSuccess: (state, action: PayloadAction<string>) => {
             state.user = state.pendingUser ?? state.user;
             state.reLoginCode = action.payload;
             state.pendingUser = null;
             state.status = "idle";
+            state.error = null;
         },
         loginFailed: (state, action: PayloadAction<string>) => {
             state.pendingUser = null;
@@ -50,15 +54,26 @@ const authSlice = createSlice({
         reLoginSuccess: (state, action: PayloadAction<string>) => {
             state.reLoginCode = action.payload;
             state.status = "idle";
+            state.error = null;
         },
         reLoginFailed: (state, action: PayloadAction<string>) => {
             state.user = null;
             state.reLoginCode = null;
+            state.pendingUser = null;
             state.status = "error";
             state.error = action.payload;
         }
     }
-})
+});
 
-export const { loginStarted, loginSucess, loginFailed, logout, reLoginStarted, reLoginSuccess, reLoginFailed } = authSlice.actions;
+export const {
+    loginStarted,
+    loginSuccess,
+    loginFailed,
+    logout,
+    reLoginStarted,
+    reLoginSuccess,
+    reLoginFailed
+} = authSlice.actions;
+
 export default authSlice.reducer;

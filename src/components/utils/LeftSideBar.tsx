@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     faBookmark,
     faCircleQuestion,
@@ -14,7 +15,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { NavLink } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router";
+import { logout } from "../../store/authSlice";
+import type { RootState } from "../../store/store";
 
 interface LeftSideBarProps {
     isChat?: boolean;
@@ -25,16 +29,27 @@ interface LeftSideBarProps {
 }
 
 export default function LeftSideBar({
-    isChat = false,
-    isUser = false,
-    isFolder = false,
-    isBookMark = false,
-    isSettings = false
-}: LeftSideBarProps) {
+                                        isChat = false,
+                                        isUser = false,
+                                        isFolder = false,
+                                        isBookMark = false,
+                                        isSettings = false
+                                    }: LeftSideBarProps) {
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const currentUser = useSelector((state: RootState) => state.auth.user);
 
     const iconSize = {
-        width: '42px',
-        height: '42px'
+        width: "42px",
+        height: "42px"
+    };
+
+    const handleConfirmLogout = () => {
+        dispatch(logout());
+        setShowLogoutModal(false);
+        navigate("/login");
     };
 
     return (
@@ -52,8 +67,7 @@ export default function LeftSideBar({
             <div className="d-flex flex-column gap-3 mt-4">
                 <NavLink
                     to="/chat"
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isChat ? 'active' : ''
-                        }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isChat ? "active" : ""}`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faComments} className="fs-4 chat-icon" />
@@ -61,24 +75,21 @@ export default function LeftSideBar({
 
                 <NavLink
                     to="/contacts"
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isUser ? 'active' : ''
-                        }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isUser ? "active" : ""}`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faUserGroup} className="fs-4 chat-icon" />
                 </NavLink>
 
                 <span
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isFolder ? 'active' : ''
-                        }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isFolder ? "active" : ""}`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faFolderOpen} className="fs-4 chat-icon" />
                 </span>
 
                 <span
-                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isBookMark ? 'active' : ''
-                        }`}
+                    className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isBookMark ? "active" : ""}`}
                     style={iconSize}
                 >
                     <FontAwesomeIcon icon={faBookmark} className="fs-4 chat-icon" />
@@ -100,10 +111,10 @@ export default function LeftSideBar({
                     >
                         <FontAwesomeIcon icon={faCircleQuestion} className="fs-4 chat-icon" />
                     </span>
+
                     <NavLink
                         to="/settings"
-                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? 'active' : ''
-                            }`}
+                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? "active" : ""}`}
                         style={iconSize}
                         title="Cài đặt"
                     >
@@ -112,21 +123,20 @@ export default function LeftSideBar({
                         </span>
                     </NavLink>
 
-                    <NavLink
-                        to="/settings"
-                        className={`p-2 d-inline-flex align-items-center justify-content-center rounded-3 ${isSettings ? 'active' : ''
-                            }`}
+                    <button
+                        type="button"
+                        onClick={() => setShowLogoutModal(true)}
+                        className="p-2 d-inline-flex align-items-center justify-content-center rounded-3 border-0 bg-transparent"
                         style={iconSize}
-                        title="Cài đặt"
+                        title="Đăng xuất"
                     >
-                        <span>
-                            <FontAwesomeIcon icon={faRightFromBracket} className="fs-4 chat-icon" />
-                        </span>
-                    </NavLink>
+                        <FontAwesomeIcon icon={faRightFromBracket} className="fs-4 chat-icon text-danger" />
+                    </button>
 
                     <span
                         className="p-2 d-inline-flex align-items-center justify-content-center rounded-circle"
                         style={iconSize}
+                        title={currentUser || "Tài khoản"}
                     >
                         <img
                             src="https://png.pngtree.com/png-clipart/20210606/original/pngtree-gray-avatar-placeholder-png-image_6398267.jpg"
@@ -136,7 +146,34 @@ export default function LeftSideBar({
                         />
                     </span>
                 </div>
-            </div >
-        </div >
+            </div>
+
+            {showLogoutModal && (
+                <div className="modal-backdrop-custom">
+                    <div className="modal-card-custom animate-fade-in" style={{ maxWidth: "380px" }}>
+                        <h6 className="fw-bold mb-2">Xác nhận đăng xuất</h6>
+                        <p className="text-muted small mb-4">
+                            Bạn có chắc muốn đăng xuất khỏi phiên làm việc hiện tại không?
+                        </p>
+                        <div className="d-flex justify-content-end gap-2">
+                            <button
+                                type="button"
+                                className="btn btn-light btn-sm px-3"
+                                onClick={() => setShowLogoutModal(false)}
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-danger btn-sm px-3"
+                                onClick={handleConfirmLogout}
+                            >
+                                Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }

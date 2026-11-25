@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router'
 import { Provider } from 'react-redux'
 import { store } from './store/store.ts'
 import { persistAuth } from './model/LoginSubcribe.ts'
-import { chatSocket } from './wss/ChatWebSocket.ts'
 
 
 // main.tsx

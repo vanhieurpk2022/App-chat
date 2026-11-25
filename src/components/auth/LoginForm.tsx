@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { loginSuccess } from '../../store/authSlice';
+import {loginStarted, loginSuccess} from '../../store/authSlice';
 
 interface LoginFormProps {
     onSwitchToRegister: () => void;
@@ -28,13 +28,9 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
             return;
         }
         setLoading(true);
+        dispatch(loginStarted(cleanUser));
         setTimeout(() => {
-            dispatch(
-                loginSuccess({
-                    user: cleanUser,
-                    token: 'token_' + Date.now()
-                })
-            );
+            dispatch(loginSuccess('relogin_' + Date.now()));
             setLoading(false);
             navigate('/chat');
         }, 500);

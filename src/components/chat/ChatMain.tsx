@@ -14,6 +14,7 @@ import FilePreviewItem from "../utils/FilePreviewItem";
 import { cloudinaryService } from "../../services/cloudinaryService";
 import MessageContent from "../utils/MessageContent ";
 import send from "../../assets/send.svg"
+import userImg from "../../assets/User.svg"
 
 interface ChatMainProps {
     title?: string | null;
@@ -32,10 +33,11 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     const [showEmoji, setEmoij] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
-    const isLoading = useSelector((state: RootState) => state.chat.isLoading);
+    const { isLoading, selectedUser, highlightId } = useSelector((state: RootState) => state.chat);
     const user = useSelector((state: RootState) => state.auth.user);
-    const selectUser = useSelector((state: RootState) => state.chat.selectedUser);
     const list = [...(messages)].reverse();
+
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const MAX_FILE = 10;
     const [selectedFile, setSelectedFile] = useState<File[]>([]);
@@ -52,16 +54,16 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
     const sendMessage = async () => {
         const text = inputMessage.trim();
-        if (!user || !selectUser) return;
+        if (!user || !selectedUser) return;
         if (!text && selectedFile.length === 0) return;
 
         let nextId = messages.at(-1)?.id ?? 0;
         const sendOne = (content: string) => {
-            chatService.sendChat(isRoom ? "room" : "people", selectUser, content);
+            chatService.sendChat(isRoom ? "room" : "people", selectedUser, content);
             dispatch(addOwnerMessage({
                 id: ++nextId,
                 name: user,
-                to: selectUser,
+                to: selectedUser,
                 mes: content,
                 type: isRoom ? 1 : 0, // 0 = chat 1-1, 1 = phòng
                 createAt: nowString(),
@@ -95,13 +97,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     }
 
     const sendIconLike = (icon: string) => {
-        if (!user || !selectUser) return;
+        if (!user || !selectedUser) return;
         const msg = encodeEmoji(icon);
-        chatService.sendChat(isRoom ? "room" : "people", selectUser ?? "", msg)
+        chatService.sendChat(isRoom ? "room" : "people", selectedUser ?? "", msg)
         dispatch(addOwnerMessage({
             id: (messages.at(-1)?.id ?? 0) + 1,
             name: user,
-            to: selectUser,
+            to: selectedUser,
             mes: msg,
             type: isRoom ? 1 : 0,                    // 0 = chat 1-1, 1 = phòng
             createAt: nowString(),
@@ -201,7 +203,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         if (mess.name === user) {
                             return (
                                 <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
-                                    <div className={`bg-primary-subtle shadow px-3 py-2 rounded-3 text-break ${emoijOnly ? "fs-3" : ""}`} style={{ maxWidth: "calc(60% - 48px)" }}>
+                                    <div className={`bg-primary-subtle shadow px-3 py-2 rounded-3 text-break ${emoijOnly ? "fs-3" : ""} `} style={{ maxWidth: "calc(60% - 48px)" }}>
                                         <MessageContent text={text} onLoad={scrollToBottom} />
                                     </div>
                                     {isLastOfGroup && (
@@ -211,10 +213,10 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                             );
                         }
                         return (
-                            <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-row gap-4 ms-3 ${mt}`}>
+                            <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-row gap-4 ms-3 ${mt} `}>
                                 <div className="rounded-circle overflow-hidden mt-auto flex-shrink-0" style={{ height: 32, width: 32 }}>
                                     {isLastOfGroup && (
-                                        <img src="https://placehold.co/600x400" alt="" width="100%" height="100%" style={{ objectFit: "cover" }} />
+                                        <img src={userImg} alt="" width="100%" height="100%" style={{ objectFit: "cover" }} />
                                     )}
                                 </div>
 

@@ -19,7 +19,7 @@ function App() {
         const cleanSocket = ChatSocketHandle(dispatch);
         const authSocket = AuthSocketHandler(dispatch);
 
-        dispatch(authService.login({ user: "vanhieurpk123", pass: "123456" }));
+        dispatch(authService.login({ user: "user1", pass: "123456" }));
 
         return () => {
             cleanSocket();

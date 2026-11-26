@@ -9,28 +9,29 @@ import ChatBlank from "../components/chat/ChatBlank";
 import users from "../assets/Users.svg"
 import user from "../assets/User.svg"
 import NotifyDisconnect from "../components/chat/NotifyDisconnect";
+import RightSearch from "../components/chat/RightSearch";
 
 export default function Chat() {
-    const [rightProfile, setRightProfile] = useState(false);
-    const isRoom = useSelector((s: RootState) => s.chat.isRoom);
-    const chatRoom = useSelector((s: RootState) => s.chat.chatRoom);
-    const chatMess = useSelector((s: RootState) => s.chat.chatMess);
-    const getSelectUser = useSelector((s: RootState) => s.chat.selectedUser);
+    const [rightProfile, setRightProfile] = useState<"profile" | "search" | null>(null);
+    const { isRoom, chatRoom, chatMess, selectedUser } = useSelector((s: RootState) => s.chat);
     const [searchMessage, setSearchMessage] = useState(false);
 
-    const openSearch = () => {
-        setSearchMessage(true)
-        setRightProfile(true);
-    }
 
     const view = isRoom
         ? { title: chatRoom?.name, messages: chatRoom?.chatData ?? [], countNumber: chatRoom?.userList.length }
-        : { title: getSelectUser, messages: chatMess ?? [] };
+        : { title: selectedUser, messages: chatMess ?? [] };
 
     useEffect(() => {
-        setRightProfile(false);
-        setSearchMessage(false);
+        setRightProfile(null);
     }, [view.title, isRoom]);
+
+    const toggleProfile = () => {
+        setRightProfile((prev) => (prev === "profile" ? null : "profile"));
+    };
+
+    const toggleSearch = () => {
+        setRightProfile((prev) => (prev === "search" ? null : "search"));
+    };
 
     return <>
         {/* <NotifyDisconnect /> */}
@@ -45,17 +46,29 @@ export default function Chat() {
             </div>
 
             <div className="flex-grow-1 d-flex flex-column h-100 w-100" style={{ minWidth: 0 }}>
-                {getSelectUser ?
-                    <ChatMain onSearch={openSearch} imgUrl={isRoom ? users : user} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
+                {selectedUser ?
+                    <ChatMain onSearch={toggleSearch} imgUrl={isRoom ? users : user} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile === "profile"} onShow={toggleProfile} />
                     : <ChatBlank />}
             </div>
 
-            {
-                (rightProfile) &&
-                <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 overflow-auto " >
-                    <RightProfile oncloseSearchMsg={() => setSearchMessage(false)} onSearchMsg={searchMessage} userImg={user} roomImg={users} chatRoom={isRoom ? chatRoom : null} title={view.title ?? ""} countNumber={isRoom ? view.countNumber : 0} isRoom={isRoom} />
+            {rightProfile && (
+                <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 overflow-auto">
+                    {rightProfile === "profile" ? (
+                        <RightProfile
+                            onSearchMsg={false} // Hoặc truyền thẳng hàm toggleSearch nếu trong RightProfile cũng có nút "Tìm tin nhắn"
+                            userImg={user}
+                            roomImg={users}
+                            chatRoom={isRoom ? chatRoom : null}
+                            title={view.title ?? ""}
+                            countNumber={isRoom ? view.countNumber : 0}
+                            isRoom={isRoom}
+                        />
+                    ) : (
+                        <RightSearch oncloseSearchMsg={() => setRightProfile(null)} />
+                    )}
                 </div>
-            }
+            )}
+
 
         </div>
     </>

@@ -10,6 +10,7 @@ export interface ChatTemp {
     isRoom: boolean;
     chatRoom: ChatPeopleFormat | null;
     isLoading: boolean;
+    highlightId: number | null;
 }
 const initialState: ChatTemp = {
     UserListHoder: [],
@@ -18,6 +19,7 @@ const initialState: ChatTemp = {
     isRoom: false,
     chatRoom: null,
     isLoading: false,
+    highlightId: null,
 }
 
 const chatSlice = createSlice({
@@ -129,10 +131,13 @@ const chatSlice = createSlice({
                 }
             }
         },
+        setHighlightId: (state, action: PayloadAction<number | null>) => {
+            state.highlightId = action.payload;
+        }
     }
 })
 
 
-export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage } = chatSlice.actions;
+export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage, setHighlightId } = chatSlice.actions;
 export default chatSlice.reducer;
 

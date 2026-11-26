@@ -21,12 +21,12 @@ export default function Card({ name, time, message, isActive = false, status = f
     return (
         <div
             onClick={onClick}
-            className={`${isActive ? "active" : ""} card-panel card-button d-flex flex-row align-items-center gap-3 px-3 py-2 rounded-3`}
+            className={`${isActive ? "active" : ""} card-panel card-button d-flex flex-row align-items-center gap-3 px-2 py-2 rounded-3`}
             style={{ cursor: "pointer" }}>
             {/* Avatar */}
             <div className="position-relative flex-shrink-0">
-                <div className="rounded-circle overflow-hidden" style={{ width: 52, height: 52 }}>
-                    <img src={isCommunity ? imgRoom : imgUser} alt="" width="100%" height="100%" style={{ objectFit: "cover" }} />
+                <div className="rounded-circle overflow-hidden d-flex align-items-center justify-content-center" style={{ width: 52, height: 52, backgroundColor: "#F0F3EC" }}>
+                    <img src={isCommunity ? imgRoom : imgUser} alt="" width="32" height="32" style={{ objectFit: "cover" }} />
                 </div>
                 {status && (
                     <span className="position-absolute bottom-0 end-0 bg-success rounded-circle border border-2 border-white" style={{ width: 14, height: 14 }} />

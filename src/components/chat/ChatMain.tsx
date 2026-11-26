@@ -13,6 +13,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import FilePreviewItem from "../utils/FilePreviewItem";
 import { cloudinaryService } from "../../services/cloudinaryService";
 import MessageContent from "../utils/MessageContent ";
+import send from "../../assets/send.svg"
 
 interface ChatMainProps {
     title?: string | null;
@@ -48,16 +49,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
         setInputMessage((prev) => prev + emojiData.emoji)
     }
 
-    const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
-        e.preventDefault();
-
+    const sendMessage = async () => {
         const text = inputMessage.trim();
         if (!user || !selectUser) return;
         if (!text && selectedFile.length === 0) return;
 
         let nextId = messages.at(-1)?.id ?? 0;
-        const send = (content: string) => {
+        const sendOne = (content: string) => {
             chatService.sendChat(isRoom ? "room" : "people", selectUser, content);
             dispatch(addOwnerMessage({
                 id: ++nextId,
@@ -70,7 +68,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
         }
 
         if (text) {
-            send(encodeEmoji(text));
+            sendOne(encodeEmoji(text));
             setInputMessage("");
         }
 
@@ -80,13 +78,19 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
             const results = await Promise.all(
                 selectedFile.map((prev) => cloudinaryService.upload(prev))
             );
-            results.forEach((prev) => send(prev.url))
+            results.forEach((prev) => sendOne(prev.url))
             setSelectedFile([]);
         } catch (error) {
             console.log("Upload file thất bại:", error);
         } finally {
             setLoading(false);
         }
+    }
+
+    const keyhandleMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+        e.preventDefault();
+        sendMessage();
     }
 
     const sendIconLike = (icon: string) => {
@@ -122,10 +126,10 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     return (
         <div className="h-100 w-100 d-flex flex-column ">
             {/* Header */}
-            <div className="d-flex flex-row align-items-center gap-3 border-bottom w-100 p-3">
+            <div className="d-flex flex-row align-items-center gap-3 w-100 p-3">
 
-                <div className="rounded-circle overflow-hidden flex-shrink-0 " style={{ width: "44px", height: "44px" }}>
-                    <img style={{ objectFit: 'cover' }} src={imgUrl} width="100%" height="100%" alt="" />
+                <div className="rounded-circle overflow-hidden flex-shrink-0 d-flex align-items-center justify-content-center" style={{ width: "44px", height: "44px", backgroundColor: "#F0F3EC" }}>
+                    <img style={{ objectFit: 'cover' }} src={imgUrl} width="24" height="24" alt="" />
                 </div>
 
                 <div >
@@ -248,7 +252,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
 
             </div>
-            <div className="d-flex flex-column position-relative mt-auto p-3">
+            <div className="d-flex flex-column position-relative mt-auto">
                 {/* File Preview */}
                 {selectedFile.length > 0 && (
                     <div className="d-flex flex-row flex-wrap align-items-start gap-3 ms-3 py-2">
@@ -264,7 +268,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
 
                 {/* Công cụ */}
-                <div className="position-relative d-flex ms-3" style={{ width: "98%" }}>
+                <div className="position-relative d-flex ms-3 py-2" style={{ width: "98%" }}>
                     {/* Icon trái */}
                     <input multiple ref={fileInputRef} className="d-none" type="file" onChange={handleFileChange} />
                     {loading ?
@@ -276,19 +280,26 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         :
                         <PlusLg className="position-absolute start-0 top-50 translate-middle-y ms-3" style={{ cursor: "pointer" }} size={24} onClick={() => fileInputRef.current?.click()} />
                     }
-                    <input value={inputMessage} onKeyDown={handleSendMessage} onChange={(e) => setInputMessage(e.target.value)} className="shadow-none border-secondary form-control form-control-lg" style={{ paddingLeft: "56px", paddingRight: "96px", fontSize: "16px" }} placeholder="Aa" />
+                    <input value={inputMessage} onKeyDown={keyhandleMessage} onChange={(e) => setInputMessage(e.target.value)} className="form-control form-control-lg shadow" style={{ paddingLeft: "56px", paddingRight: "96px", fontSize: "16px" }} placeholder="Aa" />
 
                     {/* Icon phải */}
-                    <div className="position-absolute end-0 top-50 translate-middle-y me-3 d-flex gap-3 align-items-center">
+                    <div className="position-absolute end-0 top-50 translate-middle-y gap-2 me-3 d-flex align-items-center">
                         <button onClick={() => setEmoij(prev => !prev)} className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
                             style={{ cursor: "pointer" }}>
                             <EmojiSmile size={24} />
                         </button>
+                        {inputMessage.length === 0 ?
+                            <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center rounded-3" onClick={() => sendIconLike("\u{1F44D}")}
+                                style={{ cursor: "pointer" }}>
+                                <HandThumbsUpFill className="text-warning" size={24} />
+                            </button>
+                            :
+                            <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center rounded-3" onClick={() => sendMessage()}
+                                style={{ cursor: "pointer" }}>
+                                <img className="text-primary" src={send} alt="" width="24" height="24" style={{ objectFit: "cover" }} />
+                            </button>
+                        }
 
-                        <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3" onClick={() => sendIconLike("\u{1F44D}")}
-                            style={{ cursor: "pointer" }}>
-                            <HandThumbsUpFill className="text-warning" size={24} />
-                        </button>
                     </div>
 
                 </div>

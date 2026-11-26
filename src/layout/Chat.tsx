@@ -6,8 +6,8 @@ import LeftSideBar from "../components/utils/LeftSideBar";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import ChatBlank from "../components/chat/ChatBlank";
-import logoMul from "../assets/Gemini_Generated_Image_gb6akfgb6akfgb6a.png"
-import logoUser from "../assets/6596121.png"
+import users from "../assets/Users.svg"
+import user from "../assets/User.svg"
 import NotifyDisconnect from "../components/chat/NotifyDisconnect";
 
 export default function Chat() {
@@ -29,20 +29,20 @@ export default function Chat() {
                 <LeftSideBar isChat={true} />
             </div>
 
-            <div style={{ width: "350px", border: "1px solid #E8ECE5" }} className="flex-shrink-0 border-end p-3">
-                <ChatListPanel />
+            <div style={{ width: "350px" }} className="flex-shrink-0 p-3">
+                <ChatListPanel roomImg={users} userImg={user} />
             </div>
 
             <div className="flex-grow-1 d-flex flex-column h-100 w-100" style={{ minWidth: 0 }}>
                 {getSelectUser ?
-                    <ChatMain imgUrl={isRoom ? logoMul : logoUser} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
+                    <ChatMain imgUrl={isRoom ? users : user} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
                     : <ChatBlank />}
             </div>
 
             {
                 (rightProfile) &&
-                <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 border-start overflow-auto " >
-                    <RightProfile chatRoom={isRoom ? chatRoom : null} title={view.title ?? ""} countNumber={isRoom ? view.countNumber : 0} isRoom={isRoom} />
+                <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 overflow-auto " >
+                    <RightProfile userImg={user} roomImg={users} chatRoom={isRoom ? chatRoom : null} title={view.title ?? ""} countNumber={isRoom ? view.countNumber : 0} isRoom={isRoom} />
                 </div>
             }
 

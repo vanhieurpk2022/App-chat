@@ -7,13 +7,14 @@ import type { AppDispatch, RootState } from "../../store/store";
 import { chatService } from "../../services/chatService";
 import { selectChat, isRoomChat } from "../../store/chatSlice";
 import { formatTime } from "../../model/formatTime";
-import logoRoom from "../../assets/Gemini_Generated_Image_gb6akfgb6akfgb6a.png"
-import logoUser from "../../assets/6596121.png"
 import { checkIsFile, decodeEmoji } from "../../model/EncodingEmoji";
 
+interface ChatListPanelProps {
+    roomImg: string;
+    userImg: string;
+}
 
-
-export default function ChatListPanel() {
+export default function ChatListPanel({ roomImg, userImg }: ChatListPanelProps) {
     const dispatch = useDispatch<AppDispatch>();
     const users = useSelector((state: RootState) => state.chat.UserListHoder);
     const authUser = useSelector((state: RootState) => state.auth.user);
@@ -54,7 +55,7 @@ export default function ChatListPanel() {
                             `Bạn: ${rawUrl}`
                             : isRoom ? `${user.mes?.name}: ${rawUrl}` : rawUrl;
 
-                    return (<Card onClick={() => handleSelectUser(user.userList.name)} key={user.userList.name} imgRoom={logoRoom} imgUser={logoUser} isCommunity={user.userList.type == 1}
+                    return (<Card onClick={() => handleSelectUser(user.userList.name)} key={user.userList.name} imgRoom={roomImg} imgUser={userImg} isCommunity={user.userList.type == 1}
                         name={user.userList.name} time={formatTime(user.userList.actionTime)} message={msg} isActive={getUserSelect === user.userList.name} countMess={user.unReadCount} />
                     )
                 })}

@@ -10,9 +10,11 @@ interface RightProfile {
     countNumber?: number;
     title: string;
     chatRoom?: ChatPeopleFormat | null;
+    roomImg: string;
+    userImg: string;
 }
 
-export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom }: RightProfile) {
+export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom, roomImg, userImg }: RightProfile) {
     const [showMember, setShowMember] = useState(false);
 
     const handleShowMember = () => {
@@ -41,18 +43,18 @@ export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom 
                 }
 
             </div>
-            <hr className="my-4 opacity-25" />
+            <hr className="my-4 opacity-25" style={{ backgroundColor: "#E5EBE1" }} />
 
 
             {showMember ?
                 <ShowMember chatRoom={chatRoom} />
                 :
-                <div className="flex-grow-1 overflow-auto px-3 pb-3" style={{ minHeight: 0 }}>
+                <div className="flex-grow-1 overflow-auto pb-3" style={{ minHeight: 0 }}>
                     {/* Header */}
                     <div >
                         <div className="d-flex flex-column align-items-center justify-content-center pt-4">
-                            <div className="rounded-circle overflow-hidden shadow-sm mb-3 flex-shrink-0" style={{ width: "56px", height: "56px" }}>
-                                <img src="https://placehold.co/400" width={"100%"} height={"100%"} style={{ objectFit: "cover" }} alt="" />
+                            <div className="rounded-circle overflow-hidden shadow-sm mb-3 flex-shrink-0 d-flex align-items-center justify-content-center" style={{ width: "100px", height: "100px", backgroundColor: "#F0F3EC" }}>
+                                <img src={isRoom ? roomImg : userImg} width={"56"} height={"56"} style={{ objectFit: "cover" }} alt="" />
                             </div>
                             <span className="fs-4 fw-semibold text-break text-center px-2">{title}</span>
                             <span className="small">{isRoom ? "Cộng đồng" : ""}</span>

@@ -30,3 +30,17 @@ export const checkIsFile = (text: string): string => {
     }
     return text;
 };
+
+export const isUrl = (text: string): boolean => {
+    if (CLOUDINARY_PREFIX.test(text)) {
+        return true;
+    }
+    return false;
+}
+
+// để search đc tiếng việt
+export const normalize = (s: string) =>
+    s.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d");

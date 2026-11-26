@@ -1,8 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { UserList, UserListHoder } from "../model/User";
 import type { ChatMess, ChatPeopleFormat, Message } from "../model/Message";
-import { nowString } from "../model/formatTime";
-import { decodeEmoji } from "../model/EncodingEmoji";
 
 // đang lấy cho cây panel
 export interface ChatTemp {

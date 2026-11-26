@@ -23,10 +23,11 @@ interface ChatMainProps {
     isRoom: boolean;
     countNumber?: number;
     imgUrl: string;
+    onSearch: () => void;
 }
 
 
-export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber, imgUrl }: ChatMainProps) {
+export default function ChatMain({ onShow, isShow, messages, title, isRoom, countNumber, imgUrl, onSearch }: ChatMainProps) {
     const dispatch = useDispatch();
     const [showEmoji, setEmoij] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
@@ -161,6 +162,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         <CameraVideo size={24} />
                     </button>
                     <button className="btn-profile btn border-0 d-inline-flex align-items-center justify-content-center p-2 rounded-3"
+                        onClick={onSearch}
                         style={{ cursor: "pointer" }}>
                         <Search size={20} />
                     </button>
@@ -198,7 +200,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
                         if (mess.name === user) {
                             return (
-                                <div key={mess.id} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
+                                <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
                                     <div className={`bg-primary-subtle shadow px-3 py-2 rounded-3 text-break ${emoijOnly ? "fs-3" : ""}`} style={{ maxWidth: "calc(60% - 48px)" }}>
                                         <MessageContent text={text} onLoad={scrollToBottom} />
                                     </div>
@@ -209,7 +211,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                             );
                         }
                         return (
-                            <div key={mess.id} className={`d-flex flex-row gap-4 ms-3 ${mt}`}>
+                            <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-row gap-4 ms-3 ${mt}`}>
                                 <div className="rounded-circle overflow-hidden mt-auto flex-shrink-0" style={{ height: 32, width: 32 }}>
                                     {isLastOfGroup && (
                                         <img src="https://placehold.co/600x400" alt="" width="100%" height="100%" style={{ objectFit: "cover" }} />

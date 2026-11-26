@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ChatPeopleFormat } from "../../model/Message";
 import { CardMember } from "./CardMember";
 import SearchBox from "./SearchBox";
@@ -7,27 +8,30 @@ interface ShowMemeberProps {
 }
 
 export function ShowMember({ chatRoom }: ShowMemeberProps) {
+    const [search, setSearch] = useState<string>("");
     if (!chatRoom) return null;
+    const results = search.trim() ? chatRoom.userList.filter((name) => name.name.toLowerCase().includes(search)) : chatRoom.userList;
+
     return (
         <div className="d-flex flex-column gap-3 ">
-            <button type="button" className="btn btn-primary align-self-center mt-3 rounded-3 w-75 fw-medium p-2">
-                Thêm thành viên
-            </button>
-
-
             <span className="fw-semibold text-secondary ms-2" style={{ fontSize: "0.85rem" }}>
                 Danh sách thành viên ({chatRoom.userList.length})
             </span>
 
             <div className="m-auto" style={{ width: "85%" }}>
-                <SearchBox />
+                <SearchBox keyWord={search} onChange={setSearch} placeHolder="Tìm bạn bè" />
             </div>
 
             {/* Một thành viên */}
             <div className="overflow-auto">
-                {chatRoom.userList.map((us) => {
-                    return <CardMember key={us.name} name={us.name} isOwner={us.name === chatRoom.own} />
-                })}
+
+                {results.length > 0 ? (
+                    results.map((us) => (
+                        <CardMember key={us.name} name={us.name} isOwner={us.name === chatRoom.own} />
+                    ))
+                ) : (
+                    <div className="text-center text-muted small">Không tìm thấy thành viên</div>
+                )}
 
             </div>
         </div >

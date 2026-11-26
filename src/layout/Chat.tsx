@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatListPanel from "../components/chat/ChatListPanel";
 import ChatMain from "../components/chat/ChatMain";
 import RightProfile from "../components/chat/RightProfile";
@@ -16,10 +16,21 @@ export default function Chat() {
     const chatRoom = useSelector((s: RootState) => s.chat.chatRoom);
     const chatMess = useSelector((s: RootState) => s.chat.chatMess);
     const getSelectUser = useSelector((s: RootState) => s.chat.selectedUser);
+    const [searchMessage, setSearchMessage] = useState(false);
+
+    const openSearch = () => {
+        setSearchMessage(true)
+        setRightProfile(true);
+    }
 
     const view = isRoom
         ? { title: chatRoom?.name, messages: chatRoom?.chatData ?? [], countNumber: chatRoom?.userList.length }
         : { title: getSelectUser, messages: chatMess ?? [] };
+
+    useEffect(() => {
+        setRightProfile(false);
+        setSearchMessage(false);
+    }, [view.title, isRoom]);
 
     return <>
         {/* <NotifyDisconnect /> */}
@@ -35,14 +46,14 @@ export default function Chat() {
 
             <div className="flex-grow-1 d-flex flex-column h-100 w-100" style={{ minWidth: 0 }}>
                 {getSelectUser ?
-                    <ChatMain imgUrl={isRoom ? users : user} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
+                    <ChatMain onSearch={openSearch} imgUrl={isRoom ? users : user} isRoom={isRoom} countNumber={view.countNumber} messages={view.messages} title={view.title} isShow={rightProfile} onShow={() => setRightProfile(prev => !prev)} />
                     : <ChatBlank />}
             </div>
 
             {
                 (rightProfile) &&
                 <div style={{ width: "380px", backgroundColor: "#FFFFFF" }} className="flex-shrink-0 overflow-auto " >
-                    <RightProfile userImg={user} roomImg={users} chatRoom={isRoom ? chatRoom : null} title={view.title ?? ""} countNumber={isRoom ? view.countNumber : 0} isRoom={isRoom} />
+                    <RightProfile oncloseSearchMsg={() => setSearchMessage(false)} onSearchMsg={searchMessage} userImg={user} roomImg={users} chatRoom={isRoom ? chatRoom : null} title={view.title ?? ""} countNumber={isRoom ? view.countNumber : 0} isRoom={isRoom} />
                 </div>
             }
 

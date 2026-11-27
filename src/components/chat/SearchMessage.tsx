@@ -7,7 +7,7 @@ import { formatClock } from "../../model/formatTime";
 import user from "../../assets/User.svg"
 import { decodeEmoji, isUrl } from "../../model/EncodingEmoji";
 import Highlighter from "react-highlight-words";
-import { setHighlightId } from "../../store/chatSlice";
+import { setHighlightId, setHighlightKeyWords } from "../../store/chatSlice";
 
 
 export default function SearchMessage() {
@@ -22,12 +22,7 @@ export default function SearchMessage() {
 
     const handleSelectResult = (msgId: number | null) => {
         if (msgId == null) return;
-
-        const el = document.getElementById(`msg-${msgId}`);
-        if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-
+        dispatch(setHighlightKeyWords(search))
         dispatch(setHighlightId(msgId));
         setTimeout(() => dispatch(setHighlightId(null)), 2000);
     };

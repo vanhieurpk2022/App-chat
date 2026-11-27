@@ -14,7 +14,6 @@ import RightSearch from "../components/chat/RightSearch";
 export default function Chat() {
     const [rightProfile, setRightProfile] = useState<"profile" | "search" | null>(null);
     const { isRoom, chatRoom, chatMess, selectedUser } = useSelector((s: RootState) => s.chat);
-    const [searchMessage, setSearchMessage] = useState(false);
 
 
     const view = isRoom

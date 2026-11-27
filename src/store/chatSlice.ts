@@ -11,6 +11,7 @@ export interface ChatTemp {
     chatRoom: ChatPeopleFormat | null;
     isLoading: boolean;
     highlightId: number | null;
+    highlightKeyWord: string | null;
 }
 const initialState: ChatTemp = {
     UserListHoder: [],
@@ -20,6 +21,7 @@ const initialState: ChatTemp = {
     chatRoom: null,
     isLoading: false,
     highlightId: null,
+    highlightKeyWord: null,
 }
 
 const chatSlice = createSlice({
@@ -133,11 +135,14 @@ const chatSlice = createSlice({
         },
         setHighlightId: (state, action: PayloadAction<number | null>) => {
             state.highlightId = action.payload;
+        },
+        setHighlightKeyWords: (state, action: PayloadAction<string | null>) => {
+            state.highlightKeyWord = action.payload;
         }
     }
 })
 
 
-export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage, setHighlightId } = chatSlice.actions;
+export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage, setHighlightId, setHighlightKeyWords } = chatSlice.actions;
 export default chatSlice.reducer;
 

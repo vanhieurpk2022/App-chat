@@ -10,7 +10,8 @@ import type { AppDispatch } from './store/store';
 import { ChatSocketHandle } from './wss/ChatSocketHandle';
 import { AuthSocketHandler } from './wss/AuthSocketHandler';
 import { authService } from './services/authService';
-import Settings from './layout/Settings';
+import AuthLayout from './components/auth/AuthLayout';
+import SettingsLayout from './components/settings/SettingsLayout';
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
@@ -33,11 +34,13 @@ function App() {
 
                 <Route path="/contacts" element={<Contacts />} />
 
-                <Route path="/settings" element={<Settings />} />
+                <Route path="/login" element={<AuthLayout />} />
+
+                <Route path="/settings" element={<SettingsLayout />} />
 
                 <Route path="/" element={<Navigate to="/chat" replace />} />
-
-                <Route path="*" element={<Navigate to="/chat" replace />} />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+                {/*<Route path="*" element={<Navigate to="/chat" replace />} />*/}
             </Routes>
         </div>
     );

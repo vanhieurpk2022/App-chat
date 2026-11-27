@@ -1,9 +1,31 @@
 import { FileEarmarkText } from "react-bootstrap-icons";
+import Highlighter from "react-highlight-words";
 
-export default function MessageContent({ text, onLoad }: { text: string; onLoad?: () => void }) {
+interface MessageContentProps {
+    text: string,
+    onLoad?: () => void;
+    keyword?: string;
+}
+
+export default function MessageContent({ text, onLoad, keyword }: MessageContentProps) {
     const URL_ONLY = /^https?:\/\/\S+$/i;
     const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|svg|bmp)(\?.*)?$/i;
-    if (!URL_ONLY.test(text)) return <>{text} </>;
+    if (!URL_ONLY.test(text)) {
+        if (keyword) {
+            return <>
+                {
+                    <Highlighter
+                        highlightTag="span"
+                        highlightClassName="bg-warning-subtle text-dark fw-bold px-1 rounded"
+                        searchWords={[keyword]}
+                        autoEscape
+                        textToHighlight={text}
+                    />
+                }
+            </>
+        }
+        return <>{text} </>;
+    }
 
     if (IMAGE_EXT.test(text)) {
         return (

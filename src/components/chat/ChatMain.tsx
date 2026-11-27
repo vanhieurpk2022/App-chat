@@ -15,6 +15,7 @@ import { cloudinaryService } from "../../services/cloudinaryService";
 import MessageContent from "../utils/MessageContent ";
 import send from "../../assets/send.svg"
 import userImg from "../../assets/User.svg"
+import Highlighter from "react-highlight-words";
 
 interface ChatMainProps {
     title?: string | null;
@@ -33,7 +34,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     const [showEmoji, setEmoij] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
-    const { isLoading, selectedUser, highlightId } = useSelector((state: RootState) => state.chat);
+    const { isLoading, selectedUser, highlightId, highlightKeyWord } = useSelector((state: RootState) => state.chat);
     const user = useSelector((state: RootState) => state.auth.user);
     const list = [...(messages)].reverse();
 
@@ -45,8 +46,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "instant" });
+    }, [messages.length, selectedUser, isLoading]);
 
-    }, [messages])
+    useEffect(() => {
+        if (highlightId == null) return;
+        document.getElementById(`msg-${highlightId}`)
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, [highlightId]);
 
     const handleEmojiPicker = (emojiData: EmojiClickData) => {
         setInputMessage((prev) => prev + emojiData.emoji)
@@ -199,12 +205,13 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                         const text = decodeEmoji(mess.mes);
                         const emoijOnly = isEmojiOnly(text);
                         const scrollToBottom = () => bottomRef.current?.scrollIntoView({ behavior: "instant" });
+                        const isHighlight = highlightId === mess.id;
 
                         if (mess.name === user) {
                             return (
-                                <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-column align-items-end me-3 ${mt}`}>
+                                <div key={mess.id} id={`msg-${mess.id}`} className={`d-flex flex-column align-items-end me-3 ${mt} `}>
                                     <div className={`bg-primary-subtle shadow px-3 py-2 rounded-3 text-break ${emoijOnly ? "fs-3" : ""} `} style={{ maxWidth: "calc(60% - 48px)" }}>
-                                        <MessageContent text={text} onLoad={scrollToBottom} />
+                                        <MessageContent text={text} onLoad={scrollToBottom} keyword={isHighlight ? highlightKeyWord ?? "" : ""} />
                                     </div>
                                     {isLastOfGroup && (
                                         <span className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</span>
@@ -229,7 +236,7 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                                             </>
                                         )}
                                         <span className={`text-break ${emoijOnly ? "fs-3" : ""}`}>
-                                            <MessageContent text={text} onLoad={scrollToBottom} /></span>
+                                            <MessageContent text={text} onLoad={scrollToBottom} keyword={isHighlight ? highlightKeyWord ?? "" : ""} /></span>
                                     </div>
                                     {isLastOfGroup && (
                                         <div className="text-secondary mt-1" style={{ fontSize: "0.75rem" }}>{time}</div>

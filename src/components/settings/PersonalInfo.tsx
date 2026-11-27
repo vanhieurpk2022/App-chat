@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 
 interface ProfileInfo {
     name: string;
@@ -19,6 +21,8 @@ const QUICK_STATUSES = [
 ];
 
 export default function PersonalInfo() {
+    const authUser = useSelector((state: RootState) => state.auth.user);
+
     const [userStatus, setUserStatus] = useState('Đang hoạt động');
     const [customStatus, setCustomStatus] = useState('');
     const [isEditingStatus, setIsEditingStatus] = useState(false);
@@ -31,18 +35,35 @@ export default function PersonalInfo() {
     const [formError, setFormError] = useState<string | null>(null);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
-    const [profileData, setProfileData] = useState<ProfileInfo>({
-        name: 'Hoàng An',
-        email: 'an.hoang@mam.studio',
+    const [profileData, setProfileData] = useState<ProfileInfo>(() => ({
+        name: authUser || 'Hoàng An',
+        email: authUser
+            ? (authUser.includes('@') ? authUser : `${authUser}@qmes.local`)
+            : 'an.hoang@mam.studio',
         phone: '+84 912 345 678',
         job: 'Nhà thiết kế giao diện',
         department: 'Đội ngũ thiết kế',
         location: 'Hồ Chí Minh, Việt Nam',
         timezone: '(GMT+07:00) Bangkok, Hà Nội',
         bio: 'Thích xây dựng giao diện gọn gàng, dễ dùng và đồng bộ cho làm việc nhóm.'
-    });
+    }));
 
     const [formData, setFormData] = useState<ProfileInfo>(profileData);
+
+    useEffect(() => {
+        if (!authUser) return;
+        setProfileData((prev) => {
+            const nextEmail = authUser.includes('@') ? authUser : `${authUser}@qmes.local`;
+            const updated: ProfileInfo = {
+                ...prev,
+                name: authUser,
+                email: nextEmail
+            };
+            setFormData(updated);
+            return updated;
+        });
+    }, [authUser]);
+
     useEffect(() => {
         return () => {
             if (avatarUrl) {
@@ -127,7 +148,7 @@ export default function PersonalInfo() {
     const initials = profileData.name
         .split(' ')
         .filter(Boolean)
-        .map(n => n[0])
+        .map((n) => n[0])
         .join('')
         .slice(-2)
         .toUpperCase() || 'HA';
@@ -335,7 +356,7 @@ export default function PersonalInfo() {
                             />
 
                             <div className="d-flex flex-wrap gap-1 mb-2">
-                                {QUICK_STATUSES.map(item => (
+                                {QUICK_STATUSES.map((item) => (
                                     <button
                                         key={item}
                                         type="button"

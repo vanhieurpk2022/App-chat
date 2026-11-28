@@ -14,14 +14,13 @@ import {
     faEllipsis,
     faPen,
     faPlus,
-    faChevronLeft,
     faChevronRight,
     faUserGroup
 } from '@fortawesome/free-solid-svg-icons';
 
 import LeftSideBar from '../utils/LeftSideBar';
 import ContactSearch from './ContactSearch';
-import ContactsItem from './ContactsItem';
+import ContactsList from './ContactsList';
 import { contactsData, type Contact } from './ContactsData';
 import './Contacts.css';
 
@@ -374,59 +373,17 @@ export default function Contacts() {
                     }}
                 />
 
-                <div className="contacts-table-heading">
-                    <span>LIÊN HỆ</span>
-                    <span>BỘ PHẬN</span>
-                    <span>TRẠNG THÁI</span>
-                    <span />
-                </div>
-
-                <div className="contacts-list">
-                    {pageContacts.length > 0 ? (
-                        pageContacts.map(contact => (
-                            <ContactsItem key={contact.id} contact={contact} isSelected={selectedId === contact.id}
-                                          onSelect={setSelectedId} onToggleFavorite={toggleFavorite}/>
-                        ))
-                    ) : (
-                        <div className="contacts-empty">
-                            Không tìm thấy liên hệ phù hợp.
-                        </div>
-                    )}
-                </div>
-
-                <footer className="contacts-pagination">
-                    <span>
-                        Hiển thị {filteredContacts.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}
-                        {' '}đến {Math.min(currentPage * PAGE_SIZE, filteredContacts.length)}
-                        {' '}trong {filteredContacts.length} liên hệ
-                    </span>
-
-                    <div>
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(page => page - 1)}
-                        >
-                            <FontAwesomeIcon icon={faChevronLeft} />
-                        </button>
-
-                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(page => (
-                            <button
-                                key={page}
-                                className={currentPage === page ? 'current-page' : ''}
-                                onClick={() => setCurrentPage(page)}
-                            >
-                                {page}
-                            </button>
-                        ))}
-
-                        <button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(page => page + 1)}
-                        >
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </button>
-                    </div>
-                </footer>
+                <ContactsList
+                    pageContacts={pageContacts}
+                    selectedId={selectedId}
+                    filteredCount={filteredContacts.length}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    pageSize={PAGE_SIZE}
+                    onSelect={setSelectedId}
+                    onToggleFavorite={toggleFavorite}
+                    onPageChange={setCurrentPage}
+                />
             </main>
 
             <aside className="contacts-detail">

@@ -6,8 +6,6 @@ import {
     faCircle,
     faStar,
     faUserPlus,
-    faSearch,
-    faSliders,
     faEnvelope,
     faBriefcase,
     faLocationDot,
@@ -22,6 +20,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import LeftSideBar from '../utils/LeftSideBar';
+import ContactSearch from './ContactSearch';
+import ContactsItem from './ContactsItem';
 import { contactsData, type Contact } from './ContactsData';
 import './Contacts.css';
 
@@ -247,8 +247,6 @@ export default function Contacts() {
 
     const favoriteCount = contacts.filter(item => item.favorite).length;
 
-    const departments = ['Tất cả', 'Thiết kế', 'Phát triển', 'Vận hành', 'Nội dung'];
-
     return (
         <div className="contacts-app">
 
@@ -353,71 +351,28 @@ export default function Contacts() {
                     </button>
                 </header>
 
-                <div className="contacts-toolbar">
-                    <div className="contacts-search">
-                        <FontAwesomeIcon icon={faSearch} />
-                        <input
-                            type="text"
-                            placeholder="Tìm theo tên, email hoặc bộ phận"
-                            value={search}
-                            onChange={event => {
-                                setSearch(event.target.value);
-                                setCurrentPage(1);
-                            }}
-                        />
-                    </div>
-
-                    <div className="contacts-filter-row">
-                        <div className="contacts-filter-left">
-                            <div className="contacts-select-wrap">
-                                <FontAwesomeIcon icon={faSliders} />
-                                <select
-                                    value={department}
-                                    onChange={event => {
-                                        setDepartment(event.target.value);
-                                        setCurrentPage(1);
-                                    }}
-                                >
-                                    {departments.map(item => (
-                                        <option key={item} value={item}>
-                                            {item === 'Tất cả' ? 'Bộ phận' : item}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="contacts-select-wrap">
-                                <select
-                                    value={status}
-                                    onChange={event => {
-                                        setStatus(event.target.value);
-                                        setCurrentPage(1);
-                                    }}
-                                >
-                                    <option value="Tất cả">Trạng thái</option>
-                                    <option value="Đang hoạt động">Đang hoạt động</option>
-                                    <option value="Tạm vắng">Tạm vắng</option>
-                                    <option value="Hoạt động hôm qua">Hoạt động hôm qua</option>
-                                    <option value="Hoạt động 2 giờ trước">Hoạt động 2 giờ trước</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="contacts-sort">
-                            <span>Sắp xếp:</span>
-                            <select value={sortBy} onChange={event => {
-                                    setSortBy(event.target.value);
-                                    setCurrentPage(1);}}>
-
-                                <option value="default">Mặc định</option>
-                                <option value="name-asc">Tên A–Z</option>
-                                <option value="name-desc">Tên Z–A</option>
-                                <option value="department">Bộ phận</option>
-                                <option value="status">Trạng thái</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <ContactSearch
+                    search={search}
+                    onSearchChange={value => {
+                        setSearch(value);
+                        setCurrentPage(1);
+                    }}
+                    department={department}
+                    onDepartmentChange={value => {
+                        setDepartment(value);
+                        setCurrentPage(1);
+                    }}
+                    status={status}
+                    onStatusChange={value => {
+                        setStatus(value);
+                        setCurrentPage(1);
+                    }}
+                    sortBy={sortBy}
+                    onSortChange={value => {
+                        setSortBy(value);
+                        setCurrentPage(1);
+                    }}
+                />
 
                 <div className="contacts-table-heading">
                     <span>LIÊN HỆ</span>
@@ -427,52 +382,12 @@ export default function Contacts() {
                 </div>
 
                 <div className="contacts-list">
-                    {pageContacts.length > 0 ? pageContacts.map(contact => (
-                        <div
-                            key={contact.id}
-                            className={`contacts-row ${selectedId === contact.id ? 'active-row' : ''}`}
-                            onClick={() => setSelectedId(contact.id)}
-                        >
-                            <div className="contacts-person">
-                                {contact.avatar ? (
-                                    <img src={contact.avatar} alt={contact.name} />
-                                ) : (
-                                    <div className="contacts-avatar-placeholder">
-                                        {contact.initials}
-                                    </div>
-                                )}
-
-                                <div>
-                                    <strong>{contact.name}</strong>
-                                    <small>{contact.job}</small>
-                                </div>
-                            </div>
-
-                            <span className="contacts-department">{contact.department}</span>
-
-                            <span className="contacts-status">
-                                <i className={`status-dot ${
-                                    contact.status === 'Đang hoạt động'
-                                        ? 'online'
-                                        : contact.status === 'Tạm vắng'
-                                            ? 'away'
-                                            : 'offline'
-                                }`} />
-                                {contact.status}
-                            </span>
-
-                            <button
-                                className={`contacts-favorite ${contact.favorite ? 'is-favorite' : ''}`}
-                                onClick={event => {
-                                    event.stopPropagation();
-                                    toggleFavorite(contact.id);
-                                }}
-                                title="Yêu thích"
-                            >
-                                <FontAwesomeIcon icon={faStar} />
-                            </button>
-                        </div>
-                    )) : (
+                    {pageContacts.length > 0 ? (
+                        pageContacts.map(contact => (
+                            <ContactsItem key={contact.id} contact={contact} isSelected={selectedId === contact.id}
+                                          onSelect={setSelectedId} onToggleFavorite={toggleFavorite}/>
+                        ))
+                    ) : (
                         <div className="contacts-empty">
                             Không tìm thấy liên hệ phù hợp.
                         </div>

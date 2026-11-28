@@ -21,6 +21,7 @@ import {
 
 import LeftSideBar from '../utils/LeftSideBar';
 import ContactSearch from './ContactSearch';
+import ContactsItem from './ContactsItem';
 import { contactsData, type Contact } from './ContactsData';
 import './Contacts.css';
 
@@ -381,52 +382,12 @@ export default function Contacts() {
                 </div>
 
                 <div className="contacts-list">
-                    {pageContacts.length > 0 ? pageContacts.map(contact => (
-                        <div
-                            key={contact.id}
-                            className={`contacts-row ${selectedId === contact.id ? 'active-row' : ''}`}
-                            onClick={() => setSelectedId(contact.id)}
-                        >
-                            <div className="contacts-person">
-                                {contact.avatar ? (
-                                    <img src={contact.avatar} alt={contact.name} />
-                                ) : (
-                                    <div className="contacts-avatar-placeholder">
-                                        {contact.initials}
-                                    </div>
-                                )}
-
-                                <div>
-                                    <strong>{contact.name}</strong>
-                                    <small>{contact.job}</small>
-                                </div>
-                            </div>
-
-                            <span className="contacts-department">{contact.department}</span>
-
-                            <span className="contacts-status">
-                                <i className={`status-dot ${
-                                    contact.status === 'Đang hoạt động'
-                                        ? 'online'
-                                        : contact.status === 'Tạm vắng'
-                                            ? 'away'
-                                            : 'offline'
-                                }`} />
-                                {contact.status}
-                            </span>
-
-                            <button
-                                className={`contacts-favorite ${contact.favorite ? 'is-favorite' : ''}`}
-                                onClick={event => {
-                                    event.stopPropagation();
-                                    toggleFavorite(contact.id);
-                                }}
-                                title="Yêu thích"
-                            >
-                                <FontAwesomeIcon icon={faStar} />
-                            </button>
-                        </div>
-                    )) : (
+                    {pageContacts.length > 0 ? (
+                        pageContacts.map(contact => (
+                            <ContactsItem key={contact.id} contact={contact} isSelected={selectedId === contact.id}
+                                          onSelect={setSelectedId} onToggleFavorite={toggleFavorite}/>
+                        ))
+                    ) : (
                         <div className="contacts-empty">
                             Không tìm thấy liên hệ phù hợp.
                         </div>

@@ -1,13 +1,13 @@
 import { CameraVideo, ChatDots, CircleFill, EmojiSmile, FileEarmarkText, HandThumbsUpFill, LayoutSidebarReverse, Person, PlusLg, Search, Telephone } from "react-bootstrap-icons";
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChatMess } from "../../model/Message";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { chatService } from "../../services/chatService";
-import { addOwnerMessage } from "../../store/chatSlice";
-import { formatClock, nowString } from "../../model/formatTime";
-import { decodeEmoji, encodeEmoji, isEmojiOnly } from "../../model/EncodingEmoji";
+import { addOwnerMessage, setOnline } from "../../store/chatSlice";
+import { formatClock, formatTime, nowString } from "../../model/formatTime";
+import { decodeEmoji, encodeEmoji, isEmojiOnly, isFile, isUrl } from "../../model/EncodingEmoji";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import FilePreviewItem from "../utils/FilePreviewItem";
@@ -16,6 +16,8 @@ import MessageContent from "../utils/MessageContent ";
 import send from "../../assets/send.svg"
 import userImg from "../../assets/User.svg"
 import Highlighter from "react-highlight-words";
+import { chatSocket } from "../../wss/ChatWebSocket";
+import { wssEvent } from "../../model/webSocketUrl";
 
 interface ChatMainProps {
     title?: string | null;
@@ -34,15 +36,20 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
     const [showEmoji, setEmoij] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
-    const { isLoading, selectedUser, highlightId, highlightKeyWord } = useSelector((state: RootState) => state.chat);
+    const { isLoading, selectedUser, highlightId, highlightKeyWord, isOnline } = useSelector((state: RootState) => state.chat);
     const user = useSelector((state: RootState) => state.auth.user);
-    const list = [...(messages)].reverse();
 
-
+    console.log(isOnline)
     const fileInputRef = useRef<HTMLInputElement>(null);
     const MAX_FILE = 10;
     const [selectedFile, setSelectedFile] = useState<File[]>([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (isRoom || !selectedUser) return;
+        dispatch(setOnline(false));
+        chatSocket.send(wssEvent.CHECK_USER_ONLINE, { user: selectedUser });
+    }, [selectedUser, isRoom]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "instant" });
@@ -144,19 +151,30 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                 <div >
                     <span className="fs-5 fw-semibold">{title}</span>
                     <div className="d-flex align-items-center gap-2">
-                        <div className="rounded-circle bg-success flex-grow-0" style={{ width: "10px", height: "10px" }}></div>
                         {isRoom ?
-                            <div className="d-flex flex-row align-items-center gap-2">
-                                <small>Cộng đồng </small>
-                                <CircleFill className="text-secondary" size={5} />
-                                <div className="d-flex flex-row align-items-center  gap-2">
-                                    <Person />
-                                    <small>{countNumber} thành viên</small>
+                            <>
+                                <div className="d-flex flex-row align-items-center gap-2">
+                                    <small>Cộng đồng </small>
+                                    <CircleFill className="text-secondary" size={5} />
+                                    <div className="d-flex flex-row align-items-center  gap-2">
+                                        <Person />
+                                        <small>{countNumber} thành viên</small>
+                                    </div>
+
+
                                 </div>
+                            </>
 
-
-                            </div>
-                            : <span className="small text-secondary">Đang hoạt động</span>}
+                            : isOnline ?
+                                <>
+                                    <div className="rounded-circle bg-success flex-grow-0" style={{ width: "10px", height: "10px" }}></div>
+                                    <span className="small text-secondary">Đang hoạt động</span>
+                                </>
+                                : <>
+                                    <div className="rounded-circle bg-secondary flex-grow-0" style={{ width: "10px", height: "10px" }}></div>
+                                    <span className="small text-secondary">{formatTime(messages.at(-1)?.createAt)}</span>
+                                </>
+                        }
 
                     </div>
                 </div>
@@ -192,10 +210,10 @@ export default function ChatMain({ onShow, isShow, messages, title, isRoom, coun
                             <span className="visually-hidden">Đang tải...</span>
                         </div>
                     </div>
-                    : list.length > 0 ? list.map((mess, i) => {
+                    : messages.length > 0 ? messages.map((mess, i) => {
 
-                        const prev = list[i - 1];
-                        const next = list[i + 1];
+                        const prev = messages[i - 1];
+                        const next = messages[i + 1];
 
                         const isFirstOfGroup = !prev || prev.name !== mess.name; // đầu cụm tin liên tiếp
                         const isLastOfGroup = !next || next.name !== mess.name;  // cuối cụm

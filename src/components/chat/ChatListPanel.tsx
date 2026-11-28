@@ -25,7 +25,7 @@ export default function ChatListPanel({ roomImg, userImg }: ChatListPanelProps) 
         }
 
 
-    }, [authUser])
+    }, [authUser, UserListHoder])
 
     const handleSelectUser = (userName: string) => {
         dispatch(selectChat(userName));

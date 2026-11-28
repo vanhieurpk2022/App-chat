@@ -1,6 +1,6 @@
 import { nowString } from "../model/formatTime";
 import { wssEvent } from "../model/webSocketUrl";
-import { getNewMessage, setPeopleMessage, setRoomMessage, setUsers } from "../store/chatSlice";
+import { getNewMessage, selectChat, setOnline, setPeopleMessage, setRoomMessage, setUsers, removeRoom } from "../store/chatSlice";
 import type { AppDispatch } from "../store/store";
 import { chatSocket } from "./ChatWebSocket";
 
@@ -25,6 +25,17 @@ export function ChatSocketHandle(dispatch: AppDispatch) {
         chatSocket.on(wssEvent.SEND_CHAT, (msg) => {
             if (msg.status === "success") {
                 dispatch(getNewMessage({ ...msg.data, createAt: nowString() }))
+            }
+        }),
+        chatSocket.on(wssEvent.CHECK_USER_ONLINE, (msg) => {
+            if (msg.status === "success") {
+                dispatch(setOnline(msg.data.status));
+            }
+        }),
+        chatSocket.on(wssEvent.OUT_ROOM, (msg) => {
+            if (msg.status === "success") {
+                dispatch(selectChat(null));
+                dispatch(removeRoom());
             }
         })
 

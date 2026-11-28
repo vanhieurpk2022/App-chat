@@ -12,6 +12,7 @@ export interface ChatTemp {
     isLoading: boolean;
     highlightId: number | null;
     highlightKeyWord: string | null;
+    isOnline: boolean;
 }
 const initialState: ChatTemp = {
     UserListHoder: [],
@@ -22,6 +23,7 @@ const initialState: ChatTemp = {
     isLoading: false,
     highlightId: null,
     highlightKeyWord: null,
+    isOnline: false,
 }
 
 const chatSlice = createSlice({
@@ -36,7 +38,7 @@ const chatSlice = createSlice({
                 unReadCount: 0,
             }));
         },
-        selectChat: (state, action: PayloadAction<string>) => {
+        selectChat: (state, action: PayloadAction<string | null>) => {
             state.selectedUser = action.payload;
             state.chatMess = [];
             state.isLoading = true;
@@ -138,11 +140,18 @@ const chatSlice = createSlice({
         },
         setHighlightKeyWords: (state, action: PayloadAction<string | null>) => {
             state.highlightKeyWord = action.payload;
+        },
+        setOnline: (state, action: PayloadAction<boolean>) => {
+            state.isOnline = action.payload;
+        },
+        removeRoom: (state) => {
+            if (!state.chatRoom) return;
+            state.UserListHoder = state.UserListHoder.filter((prev) => prev.userList.name !== state.selectedUser);
         }
     }
 })
 
 
-export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage, setHighlightId, setHighlightKeyWords } = chatSlice.actions;
+export const { setUsers, selectChat, setPeopleMessage, isRoomChat, setRoomMessage, addOwnerMessage, getNewMessage, setHighlightId, setHighlightKeyWords, setOnline, removeRoom } = chatSlice.actions;
 export default chatSlice.reducer;
 

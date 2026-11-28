@@ -5,6 +5,10 @@ import { ShowMember } from "../utils/ShowMember";
 import { useEffect, useState } from "react";
 import type { ChatPeopleFormat } from "../../model/Message";
 import SearchMessage from "./SearchMessage";
+import { chatSocket } from "../../wss/ChatWebSocket";
+import { wssEvent } from "../../model/webSocketUrl";
+import { useDispatch } from "react-redux";
+import { selectChat } from "../../store/chatSlice";
 
 interface RightProfile {
     isRoom: boolean;
@@ -14,14 +18,19 @@ interface RightProfile {
     roomImg: string;
     userImg: string;
     onSearchMsg: boolean;
+    onChangeModal: () => void,
+    onComfirm: () => void,
+    onShowModal: boolean;
 }
 
-export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom, roomImg, userImg, onSearchMsg }: RightProfile) {
+export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom, roomImg, userImg, onChangeModal, onComfirm, onShowModal }: RightProfile) {
     const [showMember, setShowMember] = useState(false);
 
     const handleShowMember = () => {
         setShowMember(true)
     }
+
+
 
     return (
         <div className="d-flex flex-column h-100 bg-white">
@@ -105,17 +114,39 @@ export default function RightProfile({ isRoom, countNumber = 0, title, chatRoom,
 
                     {/* Thao tác */}
                     <hr className="my-4 opacity-25" />
-                    <button className="btn-custom btn border-0 rounded-3 text-start text-dark-emphasis d-flex align-items-center gap-3 px-3 py-2 w-100 mb-1">
-                        <ExclamationTriangle size={20} className="text-secondary-emphasis flex-shrink-0" />
-                        <span className="fs-6 fw-normal">Báo xấu</span>
-                    </button>
+                    {isRoom ?
+                        <button className="btn-custom btn border-0 rounded-3 text-start text-danger d-flex align-items-center gap-3 px-3 py-2 w-100" onClick={onChangeModal}>
+                            <Trash size={20} className="flex-shrink-0" />
+                            <span className="fs-6 fw-normal">Rời phòng</span>
+                        </button>
+                        : ""}
 
-                    <button className="btn-custom btn border-0 rounded-3 text-start text-danger d-flex align-items-center gap-3 px-3 py-2 w-100">
-                        <Trash size={20} className="flex-shrink-0" />
-                        <span className="fs-6 fw-normal">Xoá lịch sử trò chuyện</span>
-                    </button>
 
                 </div>
+            }
+
+            {onShowModal &&
+                <>
+                    <div className="modal fade show d-block" tabIndex={-1} onClick={onChangeModal}>
+                        <div className="modal-dialog modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Xác nhận rời phòng</h5>
+                                    <button type="button" className="btn-close" aria-label="Close" onClick={onChangeModal} />
+                                </div>
+                                <div className="modal-body">
+                                    Bạn chắc chắn muốn rời phòng.
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-danger" onClick={onComfirm}>Rời phòng</button>
+                                    <button type="button" className="btn btn-secondary" onClick={onChangeModal}>Quay lại</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="modal-backdrop fade show" />
+                </>
             }
 
         </div >

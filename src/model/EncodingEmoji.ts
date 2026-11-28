@@ -31,16 +31,24 @@ export const checkIsFile = (text: string): string => {
     return text;
 };
 
+export const isFile = (text: string): string => {
+    const imageExts = [".png", ".jpg", ".jpeg", ".gif", ".webp"];
+    const videoExts = [".mp4", ".mov", ".webm"];
+    if (CLOUDINARY_PREFIX.test(text)) {
+        if (imageExts.some((ext) => text.endsWith(ext))) {
+            return "img";
+        }
+        if (videoExts.some((ext) => text.endsWith(ext))) {
+            return "video";
+        }
+        return "file";
+    }
+    return "";
+};
+
 export const isUrl = (text: string): boolean => {
     if (CLOUDINARY_PREFIX.test(text)) {
         return true;
     }
     return false;
 }
-
-// để search đc tiếng việt
-export const normalize = (s: string) =>
-    s.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/đ/g, "d");
